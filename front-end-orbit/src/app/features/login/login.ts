@@ -8,7 +8,7 @@ import {
 import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { CommonModule } from '@angular/common';
 import { email, form, FormField, minLength, required } from '@angular/forms/signals';
-import { Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
 
 interface LoginData {
   email: string;
@@ -18,12 +18,10 @@ interface LoginData {
 @Component({
   selector: 'app-login',
   providers: [provideIcons({ lucideMail, lucideLock })],
-  imports: [CommonModule, FormField, NgIcon, HlmInputGroupImports, HlmButtonImports],
+  imports: [CommonModule, FormField, NgIcon, HlmInputGroupImports, HlmButtonImports, RouterModule],
   templateUrl: './login.html'
 })
 export class Login {
-  private readonly route = inject(Router);
-
   protected readonly loginText = signal('Faça o login na sua conta');
   protected readonly emailPlaceholder = signal('Digite seu email');
   protected readonly passwordPlaceholder = signal('Digite sua senha');
@@ -39,6 +37,7 @@ export class Login {
 
   loginForm = form(this.loginModel, (shemaPath) => {
     email(shemaPath.email, { message: 'Email inválido' })
+    required(shemaPath.email, { message: 'Email obrigatorio!'})
 
     required(shemaPath.password, { message: 'Senha é obrigatória' });
     minLength(shemaPath.password, 8, { message: 'Senha deve ter no mínimo 8 caracteres' });
@@ -48,8 +47,5 @@ export class Login {
     console.log(this.loginModel())
   }
 
-  goToForget(){
-    this.route.navigate(['/forget-password'])
-  }
 
 }

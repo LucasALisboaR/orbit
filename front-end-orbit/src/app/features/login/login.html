@@ -27,7 +27,7 @@
 
             <div>
                 <div class="text-sm text-end mb-0.5">
-                    <a (click)="goToForget()" class="font-semibold text-primary cursor-pointer">{{forgetText()}}</a>
+                    <a routerLink="/forget-password" class="font-semibold text-primary cursor-pointer">{{forgetText()}}</a>
                 </div>
                 <hlm-input-group>
                     <input hlmInputGroupInput [formField]="loginForm.password" type="password"
@@ -55,7 +55,7 @@
 
         <p class="mt-10 text-center text-sm/6">
             {{noAccountText()}}
-            <a href="#" class="font-semibold text-primary hover:text-primary/80">{{noAccountSubmitText()}}</a>
+            <a routerLink="/create-user" class="font-semibold text-primary hover:text-primary/80">{{noAccountSubmitText()}}</a>
         </p>
     </div>
 </div>
