@@ -27,7 +27,7 @@
 
             <div>
                 <div class="text-sm text-end mb-0.5">
-                    <a href="#" class="font-semibold text-primary">{{forgetText()}}</a>
+                    <a (click)="goToForget()" class="font-semibold text-primary cursor-pointer">{{forgetText()}}</a>
                 </div>
                 <hlm-input-group>
                     <input hlmInputGroupInput [formField]="loginForm.password" type="password"

@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { HlmInputGroupImports } from '@spartan-ng/helm/input-group';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
@@ -8,6 +8,7 @@ import {
 import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { CommonModule } from '@angular/common';
 import { email, form, FormField, minLength, required } from '@angular/forms/signals';
+import { Router } from '@angular/router';
 
 interface LoginData {
   email: string;
@@ -21,6 +22,8 @@ interface LoginData {
   templateUrl: './login.html'
 })
 export class Login {
+  private readonly route = inject(Router);
+
   protected readonly loginText = signal('Faça o login na sua conta');
   protected readonly emailPlaceholder = signal('Digite seu email');
   protected readonly passwordPlaceholder = signal('Digite sua senha');
@@ -43,6 +46,10 @@ export class Login {
 
   onSubmitLogin(): void {
     console.log(this.loginModel())
+  }
+
+  goToForget(){
+    this.route.navigate(['/forget-password'])
   }
 
 }
