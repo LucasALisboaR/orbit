@@ -1,7 +1,0 @@
-@import 'tailwindcss';
-
-/* Espelha src/styles/design-tokens.scss — fonte única das cores */
-@theme {
-  --color-primary: var(--primary);
-  --color-secondary: var(--secondary);
-}
