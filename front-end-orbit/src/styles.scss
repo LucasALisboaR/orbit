@@ -1,1 +1,4 @@
 /* You can add global styles to this file, and also import other style files */
+@use './styles/reset' as *;
+@use './styles/design-tokens' as *;
+@use './styles/sf-pro-fonts' as *;
