@@ -48,8 +48,14 @@
         </form>
         <div class="mt-4">
             <button type="submit" hlmBtn aria-label="Submit" variant="default" class="flex w-full justify-center"
-                (click)="onSubmitLogin()" [disabled]="!loginForm().valid()">
+                (click)="onSubmitLogin()" [disabled]="!loginForm().valid() || loading()">
+                @if (loading()) {
+                <span class="animate-spin">
+                    <ng-icon name="lucideLoader" />
+                </span>
+                } @else {
                 {{submitText()}}
+                }
             </button>
         </div>
 

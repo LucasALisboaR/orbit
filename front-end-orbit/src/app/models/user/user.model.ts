@@ -1,3 +1,12 @@
+export enum UserTheme {
+    LIGHT = 'light',
+    DARK = 'dark',
+}
+
+export enum UserRole {
+    ADMIN = 'admin',
+    USER = 'user',
+}
 export interface LoginData {
     email: string;
     password: string;
@@ -12,6 +21,18 @@ export interface NewUserData {
     lastName: string;
     email: string;
     password: string;
-    role?: string | 'admin' | 'user';
-    theme?: string | 'light' | 'dark';
+    role?: UserRole;
+    theme?: UserTheme;
+}
+
+export interface User {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    role: UserRole;
+    theme: UserTheme;
+    isActive: boolean;
+    createdAt: string;
+    updatedAt: string;
 }

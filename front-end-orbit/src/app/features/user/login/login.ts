@@ -10,6 +10,9 @@ import { CommonModule } from '@angular/common';
 import { email, form, FormField, minLength, required } from '@angular/forms/signals';
 import { RouterModule } from '@angular/router';
 import { LoginData } from '../../../models/user/user.model';
+import { UserService } from '../../../services/user/login.service';
+import { finalize } from 'rxjs';
+import { toast } from '@spartan-ng/brain/sonner';
 
 @Component({
   selector: 'app-login',
@@ -18,6 +21,7 @@ import { LoginData } from '../../../models/user/user.model';
   templateUrl: './login.html'
 })
 export class Login {
+  private readonly userService = inject(UserService);
   protected readonly loginText = signal('Faça o login na sua conta');
   protected readonly emailPlaceholder = signal('Digite seu email');
   protected readonly passwordPlaceholder = signal('Digite sua senha');
@@ -25,6 +29,8 @@ export class Login {
   protected readonly submitText = signal('Entrar');
   protected readonly noAccountText = signal('Não tem uma conta?');
   protected readonly noAccountSubmitText = signal('Cadastre-se');
+
+  protected readonly loading = signal(false);
 
   loginModel = signal<LoginData>({
     email: '',
@@ -40,7 +46,19 @@ export class Login {
   });
 
   onSubmitLogin(): void {
-    console.log(this.loginModel())
+    this.loading.set(true);
+    this.userService.login(this.loginModel()).pipe(
+      finalize(() => this.loading.set(false))
+    ).subscribe({
+      next: (user) => {
+        this.userService.setUser(user);
+        toast.success('Login realizado com sucesso!');
+      },
+      error: (error) => {
+        toast.error(error.error.message);
+        console.error(error);
+      }
+    })
   }
 
 
