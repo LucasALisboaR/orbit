@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.orbit.user.application.CreateUserUseCase;
+import br.com.orbit.user.application.DeleteUserUseCase;
 import br.com.orbit.user.application.ForgotPasswordUseCase;
 import br.com.orbit.user.application.GetUserUseCase;
 import br.com.orbit.user.application.LoginUserUseCase;
@@ -43,17 +45,20 @@ public class UserController {
     private final LoginUserUseCase loginUserUseCase;
     private final ForgotPasswordUseCase forgotPasswordUseCase;
     private final GetUserUseCase getUserUseCase;
+    private final DeleteUserUseCase deleteUserUseCase;
 
     public UserController(
             CreateUserUseCase createUserUseCase,
             LoginUserUseCase loginUserUseCase,
             ForgotPasswordUseCase forgotPasswordUseCase,
-            GetUserUseCase getUserUseCase
+            GetUserUseCase getUserUseCase,
+            DeleteUserUseCase deleteUserUseCase
     ) {
         this.createUserUseCase = createUserUseCase;
         this.loginUserUseCase = loginUserUseCase;
         this.forgotPasswordUseCase = forgotPasswordUseCase;
         this.getUserUseCase = getUserUseCase;
+        this.deleteUserUseCase = deleteUserUseCase;
     }
 
     @PostMapping("/users")
@@ -76,5 +81,11 @@ public class UserController {
     @PostMapping("/auth/forgot-password")
     public ResponseEntity<MessageResponse> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
         return ResponseEntity.ok(forgotPasswordUseCase.execute(request));
+    }
+
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<MessageResponse> deleteUser(@PathVariable UUID id) {
+        deleteUserUseCase.execute(id);
+        return ResponseEntity.ok(new MessageResponse("Usuário deletado com sucesso"));
     }
 }
