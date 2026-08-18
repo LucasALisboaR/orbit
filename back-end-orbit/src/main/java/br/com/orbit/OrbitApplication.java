@@ -1,13 +1,13 @@
-package br.com.orbir.back_end_orbir;
+package br.com.orbit;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BackEndOrbirApplication {
+public class OrbitApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(BackEndOrbirApplication.class, args);
+		SpringApplication.run(OrbitApplication.class, args);
 	}
 
 }

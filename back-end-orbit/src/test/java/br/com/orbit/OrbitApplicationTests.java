@@ -1,10 +1,10 @@
-package br.com.orbir.back_end_orbir;
+package br.com.orbit;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class BackEndOrbirApplicationTests {
+class OrbitApplicationTests {
 
 	@Test
 	void contextLoads() {
