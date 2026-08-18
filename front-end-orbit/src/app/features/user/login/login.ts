@@ -9,11 +9,7 @@ import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { CommonModule } from '@angular/common';
 import { email, form, FormField, minLength, required } from '@angular/forms/signals';
 import { RouterModule } from '@angular/router';
-
-interface LoginData {
-  email: string;
-  password: string;
-}
+import { LoginData } from '../../../models/user/user.model';
 
 @Component({
   selector: 'app-login',

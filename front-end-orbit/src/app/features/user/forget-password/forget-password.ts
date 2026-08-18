@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { HlmInputGroupImports } from '@spartan-ng/helm/input-group';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
@@ -10,10 +10,7 @@ import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { CommonModule } from '@angular/common';
 import { email, form, FormField, required } from '@angular/forms/signals';
 import { RouterModule } from '@angular/router';
-
-interface ForgetData {
-  email: string;
-}
+import { ForgetData } from '../../../models/user/user.model';
 
 @Component({
   selector: 'app-forget-password',
