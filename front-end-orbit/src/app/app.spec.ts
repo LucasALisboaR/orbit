@@ -3,6 +3,9 @@ import { App } from './app';
 
 describe('App', () => {
   beforeEach(async () => {
+    localStorage.setItem('theme', 'light');
+    document.documentElement.classList.remove('dark');
+
     await TestBed.configureTestingModule({
       imports: [App],
     }).compileComponents();
@@ -14,10 +17,18 @@ describe('App', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should render title', async () => {
+  it('should toggle the theme', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
+
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, front-end-orbit');
+    const toggle = compiled.querySelector<HTMLButtonElement>(
+      '[aria-label="Alternar entre tema claro e escuro"]',
+    );
+
+    toggle?.click();
+
+    expect(document.documentElement.classList.contains('dark')).toBe(true);
+    expect(localStorage.getItem('theme')).toBe('dark');
   });
 });
