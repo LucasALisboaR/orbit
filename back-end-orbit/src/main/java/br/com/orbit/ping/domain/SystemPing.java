@@ -1,4 +1,4 @@
-package br.com.orbit.domain.model;
+package br.com.orbit.ping.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,6 +10,11 @@ import jakarta.persistence.Table;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
+/**
+ * Camada: DOMAIN (módulo Ping)
+ *
+ * Entidade de health-check / smoke test da API e do Flyway.
+ */
 @Entity
 @Table(name = "system_ping")
 public class SystemPing {
