@@ -8,6 +8,7 @@ import br.com.orbit.user.application.dto.UserPresenter;
 import br.com.orbit.user.domain.PasswordHasher;
 import br.com.orbit.user.domain.User;
 import br.com.orbit.user.domain.UserRepository;
+import br.com.orbit.user.domain.User.UserTheme;
 
 /**
  * Camada: APPLICATION (caso de uso — implementação)
@@ -46,7 +47,8 @@ public class CreateUserService implements CreateUserUseCase {
                 request.firstName().trim(),
                 request.lastName().trim(),
                 email,
-                passwordHash
+                passwordHash,
+                UserTheme.LIGHT
         );
 
         User saved = userRepository.save(user);

@@ -1,7 +1,11 @@
 package br.com.orbit.user.api;
 
+import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,9 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.orbit.user.application.CreateUserUseCase;
 import br.com.orbit.user.application.ForgotPasswordUseCase;
+import br.com.orbit.user.application.GetUserUseCase;
 import br.com.orbit.user.application.LoginUserUseCase;
 import br.com.orbit.user.application.dto.CreateUserRequest;
 import br.com.orbit.user.application.dto.ForgotPasswordRequest;
+import br.com.orbit.user.application.dto.GetUserRequest;
 import br.com.orbit.user.application.dto.LoginRequest;
 import br.com.orbit.user.application.dto.MessageResponse;
 import br.com.orbit.user.application.dto.UserPresenter;
@@ -23,10 +29,11 @@ import jakarta.validation.Valid;
  * Traduz HTTP ↔ casos de uso.
  * Não contém regra de negócio: só valida entrada (@Valid), chama use case e devolve JSON.
  *
- * Endpoints alinhados às 3 telas do front:
- * - POST /api/users              → cadastro
- * - POST /api/auth/login         → login
- * - POST /api/auth/forgot-password → esqueci a senha
+ * Endpoints:
+ * - POST /api/users                 → cadastro
+ * - GET  /api/users/{id}            → buscar usuário
+ * - POST /api/auth/login            → login
+ * - POST /api/auth/forgot-password  → esqueci a senha
  */
 @RestController
 @RequestMapping("/api")
@@ -35,21 +42,30 @@ public class UserController {
     private final CreateUserUseCase createUserUseCase;
     private final LoginUserUseCase loginUserUseCase;
     private final ForgotPasswordUseCase forgotPasswordUseCase;
+    private final GetUserUseCase getUserUseCase;
 
     public UserController(
             CreateUserUseCase createUserUseCase,
             LoginUserUseCase loginUserUseCase,
-            ForgotPasswordUseCase forgotPasswordUseCase
+            ForgotPasswordUseCase forgotPasswordUseCase,
+            GetUserUseCase getUserUseCase
     ) {
         this.createUserUseCase = createUserUseCase;
         this.loginUserUseCase = loginUserUseCase;
         this.forgotPasswordUseCase = forgotPasswordUseCase;
+        this.getUserUseCase = getUserUseCase;
     }
 
     @PostMapping("/users")
     public ResponseEntity<UserPresenter> create(@Valid @RequestBody CreateUserRequest request) {
         UserPresenter created = createUserUseCase.execute(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
+
+    @GetMapping("/users/{id}")
+    public ResponseEntity<UserPresenter> getUser(@PathVariable UUID id) {
+        UserPresenter user = getUserUseCase.execute(new GetUserRequest(id));
+        return ResponseEntity.ok(user);
     }
 
     @PostMapping("/auth/login")

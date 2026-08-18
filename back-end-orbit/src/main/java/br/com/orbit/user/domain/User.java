@@ -41,6 +41,11 @@ public class User {
         ADMIN
     }
 
+    public enum UserTheme {
+        LIGHT,
+        DARK
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
@@ -61,6 +66,10 @@ public class User {
     @Column(nullable = false)
     private UserRole role = UserRole.BASIC;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserTheme theme = UserTheme.LIGHT;
+
     @Column(nullable = false)
     private boolean isActive;
 
@@ -76,17 +85,18 @@ public class User {
      * Factory/construtor de domínio: único caminho "oficial" para criar um User válido.
      * passwordHash já deve vir criptografado (BCrypt) pela camada de application/infrastructure.
      */
-    public User(String firstName, String lastName, String email, String passwordHash) {
+    public User(String firstName, String lastName, String email, String passwordHash, UserTheme theme) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email == null ? null : email.toLowerCase().trim();
         this.passwordHash = passwordHash;
         activate();
         setRole(UserRole.BASIC);
+        setTheme(theme);
         validate();
     }
 
-    public void update(String firstName, String lastName, String email, UserRole role) {
+    public void update(String firstName, String lastName, String email, UserRole role, UserTheme theme) {
         if (!isActive) {
             throw new IllegalArgumentException("Usuário inativo não pode ser atualizado.");
         }
@@ -94,6 +104,7 @@ public class User {
         this.lastName = lastName;
         this.email = email == null ? null : email.toLowerCase().trim();
         setRole(role);
+        setTheme(theme);
         validate();
     }
 
@@ -119,6 +130,10 @@ public class User {
         this.role = role;
     }
 
+    public void setTheme(UserTheme theme) {
+        this.theme = theme;
+    }
+
     /** Invariantes do agregado User. */
     public void validate() {
         if (firstName == null || firstName.isBlank()) {
@@ -133,6 +148,9 @@ public class User {
         }
         if (role != null && role != UserRole.BASIC && role != UserRole.ADMIN) {
             throw new IllegalArgumentException("O nivel de acesso deve ser BASIC ou ADMIN");
+        }
+        if (theme != null && theme != UserTheme.LIGHT && theme != UserTheme.DARK) {
+            throw new IllegalArgumentException("O tema deve ser LIGHT ou DARK");
         }
     }
 

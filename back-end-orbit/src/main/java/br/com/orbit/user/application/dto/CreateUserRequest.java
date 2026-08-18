@@ -1,5 +1,6 @@
 package br.com.orbit.user.application.dto;
 
+import br.com.orbit.user.domain.User.UserTheme;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
