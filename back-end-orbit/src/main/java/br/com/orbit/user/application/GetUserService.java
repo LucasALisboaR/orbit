@@ -25,6 +25,13 @@ public class GetUserService implements GetUserUseCase {
     @Override
     @Transactional(readOnly = true)
     public UserPresenter execute(GetUserRequest request) {
+        UserAccessPolicy.requireSelfOrAdmin(
+                request.actor().id(),
+                request.actor().admin(),
+                request.id(),
+                "Você não tem permissão para visualizar este usuário"
+        );
+
         User user = userRepository.findById(request.id())
                 .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado"));
         return UserPresenter.from(user);

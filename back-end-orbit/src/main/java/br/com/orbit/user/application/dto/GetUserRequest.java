@@ -11,6 +11,7 @@ import jakarta.validation.constraints.NotNull;
  */
 public record GetUserRequest(
         @NotNull(message = "O ID do usuário é obrigatório")
-        UUID id
+        UUID id,
+        @NotNull ActorRequest actor
 ) {
 }

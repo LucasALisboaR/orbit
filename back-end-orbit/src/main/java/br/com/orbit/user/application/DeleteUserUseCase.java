@@ -1,8 +1,8 @@
 package br.com.orbit.user.application;
 
-import java.util.UUID;
+import br.com.orbit.user.application.dto.DeleteUserRequest;
 
 public interface DeleteUserUseCase {
 
-    void execute(UUID id);
+    void execute(DeleteUserRequest request);
 }
