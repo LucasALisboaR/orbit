@@ -1,4 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { HlmInputGroupImports } from '@spartan-ng/helm/input-group';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
@@ -8,9 +9,9 @@ import {
 import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { CommonModule } from '@angular/common';
 import { email, form, FormField, minLength, required } from '@angular/forms/signals';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { LoginData } from '../../../models/user/user.model';
-import { UserService } from '../../../services/user/login.service';
+import { AuthService } from '../../../../../core/auth/auth.service';
 import { finalize } from 'rxjs';
 import { toast } from '@spartan-ng/brain/sonner';
 
@@ -21,7 +22,9 @@ import { toast } from '@spartan-ng/brain/sonner';
   templateUrl: './login.html'
 })
 export class Login {
-  private readonly userService = inject(UserService);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+
   protected readonly loginText = signal('Faça o login na sua conta');
   protected readonly emailPlaceholder = signal('Digite seu email');
   protected readonly passwordPlaceholder = signal('Digite sua senha');
@@ -29,7 +32,6 @@ export class Login {
   protected readonly submitText = signal('Entrar');
   protected readonly noAccountText = signal('Não tem uma conta?');
   protected readonly noAccountSubmitText = signal('Cadastre-se');
-
   protected readonly loading = signal(false);
 
   loginModel = signal<LoginData>({
@@ -38,28 +40,32 @@ export class Login {
   });
 
   loginForm = form(this.loginModel, (shemaPath) => {
-    email(shemaPath.email, { message: 'Email inválido' })
-    required(shemaPath.email, { message: 'Email obrigatorio!'})
+    email(shemaPath.email, { message: 'Email inválido' });
+    required(shemaPath.email, { message: 'Email obrigatorio!' });
 
     required(shemaPath.password, { message: 'Senha é obrigatória' });
     minLength(shemaPath.password, 8, { message: 'Senha deve ter no mínimo 8 caracteres' });
   });
 
   onSubmitLogin(): void {
+    if (!this.loginForm().valid() || this.loading()) return;
+
     this.loading.set(true);
-    this.userService.login(this.loginModel()).pipe(
-      finalize(() => this.loading.set(false))
-    ).subscribe({
-      next: (user) => {
-        this.userService.setUser(user);
-        toast.success('Login realizado com sucesso!');
-      },
-      error: (error) => {
-        toast.error(error.error.message);
-        console.error(error);
-      }
-    })
+    this.authService
+      .login(this.loginModel())
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: () => {
+          toast.success('Login realizado com sucesso!');
+          void this.router.navigate(['/home']);
+        },
+        error: (error: HttpErrorResponse) => {
+          const message =
+            typeof error.error?.message === 'string'
+              ? error.error.message
+              : 'Não foi possível entrar. Verifique email e senha.';
+          toast.error(message);
+        },
+      });
   }
-
-
 }
