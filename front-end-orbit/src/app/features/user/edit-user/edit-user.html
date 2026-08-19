@@ -1,0 +1,281 @@
+<div class="mx-auto flex w-full max-w-5xl flex-col gap-8">
+  <div class="flex flex-col gap-1">
+    <h1 class="text-2xl tracking-tight">Editar perfil</h1>
+    <p class="text-muted-foreground text-sm">
+      Atualize seus dados pessoais. A senha só muda se você preencher o campo.
+    </p>
+  </div>
+
+  @if (loadingProfile()) {
+  <div class="flex items-center gap-2 text-sm">
+    <hlm-spinner />
+    Carregando seus dados...
+  </div>
+  } @else {
+  <form class="grid max-w-xl gap-4" (submit)="$event.preventDefault(); onSubmit()">
+    <div>
+      <hlm-input-group>
+        <input
+          hlmInputGroupInput
+          [formField]="editForm.firstName"
+          type="text"
+          [placeholder]="firstNamePlaceholder()"
+        />
+        <hlm-input-group-addon>
+          <ng-icon name="lucideUser" />
+        </hlm-input-group-addon>
+      </hlm-input-group>
+      @if (editForm.firstName().touched() && editForm.firstName().invalid()) {
+      <ul class="text-destructive mt-1 ml-2 text-end text-sm">
+        @for (error of editForm.firstName().errors(); track error) {
+        <li>{{ error.message }}</li>
+        }
+      </ul>
+      }
+    </div>
+
+    <div>
+      <hlm-input-group>
+        <input
+          hlmInputGroupInput
+          [formField]="editForm.lastName"
+          type="text"
+          [placeholder]="lastNamePlaceholder()"
+        />
+        <hlm-input-group-addon>
+          <ng-icon name="lucideUser" />
+        </hlm-input-group-addon>
+      </hlm-input-group>
+      @if (editForm.lastName().touched() && editForm.lastName().invalid()) {
+      <ul class="text-destructive mt-1 ml-2 text-end text-sm">
+        @for (error of editForm.lastName().errors(); track error) {
+        <li>{{ error.message }}</li>
+        }
+      </ul>
+      }
+    </div>
+
+    <div>
+      <hlm-input-group>
+        <input
+          hlmInputGroupInput
+          [formField]="editForm.email"
+          type="email"
+          [placeholder]="emailPlaceholder()"
+        />
+        <hlm-input-group-addon>
+          <ng-icon name="lucideMail" />
+        </hlm-input-group-addon>
+      </hlm-input-group>
+      @if (editForm.email().touched() && editForm.email().invalid()) {
+      <ul class="text-destructive mt-1 ml-2 text-end text-sm">
+        @for (error of editForm.email().errors(); track error) {
+        <li>{{ error.message }}</li>
+        }
+      </ul>
+      }
+    </div>
+
+    <div>
+      <hlm-input-group>
+        <input
+          hlmInputGroupInput
+          [formField]="editForm.password"
+          type="password"
+          [placeholder]="passwordPlaceholder()"
+        />
+        <hlm-input-group-addon>
+          <ng-icon name="lucideLock" />
+        </hlm-input-group-addon>
+      </hlm-input-group>
+      @if (editForm.password().touched() && editForm.password().invalid()) {
+      <ul class="text-destructive mt-1 ml-2 text-end text-sm">
+        @for (error of editForm.password().errors(); track error) {
+        <li>{{ error.message }}</li>
+        }
+      </ul>
+      }
+    </div>
+
+    <div class="flex items-center justify-between gap-4 rounded-lg border px-3 py-2.5">
+      <div class="flex flex-col gap-0.5">
+        <span class="text-sm font-medium">Tema</span>
+        <span class="text-muted-foreground text-xs">{{ isDarkTheme() ? 'Escuro' : 'Claro' }}</span>
+      </div>
+      <hlm-switch
+        id="user-theme"
+        [checked]="isDarkTheme()"
+        (checkedChange)="onThemeToggle($event)"
+        aria-label="Alternar tema escuro"
+      />
+    </div>
+
+    <button
+      type="submit"
+      hlmBtn
+      class="flex w-full justify-center gap-2 sm:w-auto"
+      [disabled]="saving() || !editForm().valid()"
+    >
+      @if (saving()) {
+      <hlm-spinner data-icon="inline-start" />
+      }
+      Salvar alterações
+    </button>
+  </form>
+
+  <div class="border-destructive/20 max-w-xl rounded-lg border p-4">
+    <h2 class="text-sm font-semibold">Zona de risco</h2>
+    <p class="text-muted-foreground mt-1 text-sm">
+      Excluir a conta desativa o acesso. Esta ação não poderá ser desfeita.
+    </p>
+    <button
+      type="button"
+      hlmBtn
+      variant="destructive"
+      class="mt-3"
+      [hlmDialogTriggerFor]="selfDeleteDialog"
+    >
+      Excluir minha conta
+    </button>
+  </div>
+  }
+
+  @if (isAdmin()) {
+  <section class="flex flex-col gap-4">
+    <div class="flex flex-col gap-1">
+      <h2 class="text-xl tracking-tight">Usuários do sistema</h2>
+      <p class="text-muted-foreground text-sm">
+        Exclua contas ou conceda o papel de administrador.
+      </p>
+    </div>
+
+    @if (loadingUsers()) {
+    <div class="flex items-center gap-2 text-sm">
+      <hlm-spinner />
+      Carregando usuários...
+    </div>
+    } @else if (usersLoadFailed()) {
+    <p class="text-muted-foreground text-sm">
+      A listagem de usuários ainda não está disponível no servidor.
+    </p>
+    } @else {
+    <div hlmTableContainer class="rounded-lg border">
+      <table hlmTable>
+        <thead hlmTableHeader>
+          <tr hlmTableRow>
+            <th hlmTableHead>Nome</th>
+            <th hlmTableHead>Email</th>
+            <th hlmTableHead>Papel</th>
+            <th hlmTableHead class="text-end">Ações</th>
+          </tr>
+        </thead>
+        <tbody hlmTableBody>
+          @for (user of users(); track user.id) {
+          <tr hlmTableRow>
+            <td hlmTableCell class="font-medium">{{ user.firstName }} {{ user.lastName }}</td>
+            <td hlmTableCell>{{ user.email }}</td>
+            <td hlmTableCell>
+              <span hlmBadge [variant]="isAdminUser(user) ? 'default' : 'secondary'">
+                {{ roleLabel(user.role) }}
+              </span>
+            </td>
+            <td hlmTableCell>
+              <div class="flex justify-end gap-2">
+                @if (!isAdminUser(user)) {
+                <button
+                  type="button"
+                  hlmBtn
+                  variant="outline"
+                  size="sm"
+                  class="gap-1"
+                  [disabled]="actingUserId() === user.id"
+                  (click)="confirmPromote(user)"
+                >
+                  <ng-icon name="lucideShieldPlus" />
+                  Tornar admin
+                </button>
+                }
+                <button
+                  type="button"
+                  hlmBtn
+                  variant="destructive"
+                  size="sm"
+                  class="gap-1"
+                  [disabled]="actingUserId() === user.id || user.id === sessionUser()?.id"
+                  (click)="confirmDelete(user)"
+                >
+                  <ng-icon name="lucideTrash2" />
+                  Excluir
+                </button>
+              </div>
+            </td>
+          </tr>
+          } @empty {
+          <tr hlmTableRow>
+            <td hlmTableCell colspan="4" class="text-muted-foreground text-center">
+              Nenhum usuário encontrado.
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    }
+  </section>
+  }
+</div>
+
+<hlm-dialog #deleteDialog>
+  <hlm-dialog-content *hlmDialogPortal>
+    <hlm-dialog-header>
+      <h3 hlmDialogTitle>Excluir usuário</h3>
+      <p hlmDialogDescription>
+        @if (pendingDelete(); as user) {
+        Confirma a exclusão de {{ user.firstName }} {{ user.lastName }}? Esta ação não poderá ser
+        desfeita.
+        }
+      </p>
+    </hlm-dialog-header>
+    <hlm-dialog-footer>
+      <button type="button" hlmBtn variant="outline" hlmDialogClose>Cancelar</button>
+      <button type="button" hlmBtn variant="destructive" (click)="deletePendingUser()">
+        Excluir
+      </button>
+    </hlm-dialog-footer>
+  </hlm-dialog-content>
+</hlm-dialog>
+
+<hlm-dialog #selfDeleteDialog>
+  <hlm-dialog-content *hlmDialogPortal>
+    <hlm-dialog-header>
+      <h3 hlmDialogTitle>Excluir minha conta</h3>
+      <p hlmDialogDescription>
+        Esta ação não poderá ser desfeita. Sua conta será desativada e você perderá o acesso ao
+        Orbit.
+      </p>
+    </hlm-dialog-header>
+    <hlm-dialog-footer>
+      <button type="button" hlmBtn variant="outline" hlmDialogClose>Cancelar</button>
+      <button type="button" hlmBtn variant="destructive" (click)="deleteOwnAccount()">
+        Excluir definitivamente
+      </button>
+    </hlm-dialog-footer>
+  </hlm-dialog-content>
+</hlm-dialog>
+
+<hlm-dialog #promoteDialog>
+  <hlm-dialog-content *hlmDialogPortal>
+    <hlm-dialog-header>
+      <h3 hlmDialogTitle>Conceder admin</h3>
+      <p hlmDialogDescription>
+        @if (pendingPromote(); as user) {
+        {{ user.firstName }} {{ user.lastName }} passará a ter acesso de administrador.
+        }
+      </p>
+    </hlm-dialog-header>
+    <hlm-dialog-footer>
+      <button type="button" hlmBtn variant="outline" hlmDialogClose>Cancelar</button>
+      <button type="button" hlmBtn (click)="promotePendingUser()">Confirmar</button>
+    </hlm-dialog-footer>
+  </hlm-dialog-content>
+</hlm-dialog>

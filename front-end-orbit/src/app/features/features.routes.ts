@@ -28,6 +28,10 @@ export const featuresRoutes: Routes = [
         path: 'home',
         loadComponent: () => import('./home/home').then((m) => m.Home),
       },
+      {
+        path: 'user/edit',
+        loadComponent: () => import('./user/edit-user/edit-user').then((m) => m.EditUser),
+      },
       { path: '', redirectTo: 'home', pathMatch: 'full' },
     ],
   },
