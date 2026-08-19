@@ -1,4 +1,4 @@
-package br.com.orbit.user.application.createUser;
+package br.com.orbit.user.application.create;
 
 import br.com.orbit.user.application.dto.CreateUserRequest;
 import br.com.orbit.user.application.dto.UserPresenter;

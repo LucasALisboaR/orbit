@@ -1,4 +1,4 @@
-package br.com.orbit.user.application.deleteUser;
+package br.com.orbit.user.application.delete;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

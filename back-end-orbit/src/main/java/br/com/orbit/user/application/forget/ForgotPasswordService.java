@@ -1,4 +1,4 @@
-package br.com.orbit.user.application.forgetPassword;
+package br.com.orbit.user.application.forget;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

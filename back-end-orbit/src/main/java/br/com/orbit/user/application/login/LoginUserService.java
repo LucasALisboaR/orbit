@@ -1,4 +1,4 @@
-package br.com.orbit.user.application.loginUser;
+package br.com.orbit.user.application.login;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

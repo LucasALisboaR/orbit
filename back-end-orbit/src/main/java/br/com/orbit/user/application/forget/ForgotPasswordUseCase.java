@@ -1,4 +1,4 @@
-package br.com.orbit.user.application.forgetPassword;
+package br.com.orbit.user.application.forget;
 
 import br.com.orbit.user.application.dto.ForgotPasswordRequest;
 import br.com.orbit.user.application.dto.MessageResponse;
