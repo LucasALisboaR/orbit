@@ -19,11 +19,16 @@ export const featuresRoutes: Routes = [
     canActivate: [guestGuard],
     loadComponent: () => import('./user/new-user/new-user').then((m) => m.NewUser),
   },
-  // Home autenticada
   {
-    path: 'home',
+    path: '',
     canActivate: [authGuard],
-    loadComponent: () => import('./home/home').then((m) => m.Home),
+    loadComponent: () => import('../layout/app-shell').then((m) => m.AppShell),
+    children: [
+      {
+        path: 'home',
+        loadComponent: () => import('./home/home').then((m) => m.Home),
+      },
+      { path: '', redirectTo: 'home', pathMatch: 'full' },
+    ],
   },
-  { path: '', redirectTo: 'home', pathMatch: 'full' },
 ];
