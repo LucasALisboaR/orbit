@@ -1,0 +1,16 @@
+<div hlmSidebarWrapper class="min-h-svh">
+  @if (!isMobile()) {
+  <app-desktop-sidebar />
+  }
+
+  <main hlmSidebarInset class="flex min-h-svh flex-col">
+    <app-header />
+    <div class="flex-1 p-4 pb-20 md:p-6 md:pb-6">
+      <router-outlet />
+    </div>
+  </main>
+</div>
+
+@if (isMobile()) {
+<app-mobile-nav />
+}

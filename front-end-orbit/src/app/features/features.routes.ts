@@ -22,7 +22,7 @@ export const featuresRoutes: Routes = [
   {
     path: '',
     canActivate: [authGuard],
-    loadComponent: () => import('../layout/app-shell').then((m) => m.AppShell),
+    loadComponent: () => import('../layout/app-shell/app-shell').then((m) => m.AppShell),
     children: [
       {
         path: 'home',
