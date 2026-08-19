@@ -1,6 +1,6 @@
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { inject, Injectable, PLATFORM_ID, RendererFactory2 } from '@angular/core';
-import { ReplaySubject } from 'rxjs';
+import { computed, inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
+import { USER_STORAGE_KEY } from '../../core/auth/auth.constants';
 
 export type Theme = 'light' | 'dark';
 
@@ -8,62 +8,84 @@ export type Theme = 'light' | 'dark';
 export class ThemeService {
   private readonly document = inject(DOCUMENT);
   private readonly platformId = inject(PLATFORM_ID);
-  private readonly renderer = inject(RendererFactory2).createRenderer(null, null);
-  private readonly themeSubject = new ReplaySubject<Theme>(1);
 
-  readonly theme$ = this.themeSubject.asObservable();
+  private readonly themeSignal = signal<Theme>(this.readInitialTheme());
+
+  readonly theme = this.themeSignal.asReadonly();
+  readonly isDark = computed(() => this.themeSignal() === 'dark');
 
   constructor() {
-    if (!isPlatformBrowser(this.platformId)) {
-      return;
-    }
-
-    this.setTheme(this.getInitialTheme());
+    this.applyClass(this.themeSignal());
   }
 
   toggleTheme(): void {
-    if (!isPlatformBrowser(this.platformId)) {
-      return;
-    }
-
-    const currentTheme = this.document.documentElement.classList.contains('dark')
-      ? 'dark'
-      : 'light';
-
-    this.setTheme(currentTheme === 'dark' ? 'light' : 'dark');
+    this.setTheme(this.themeSignal() === 'dark' ? 'light' : 'dark');
   }
 
-  private getInitialTheme(): Theme {
-    try {
-      const savedTheme = localStorage.getItem('theme');
+  setTheme(theme: Theme): void {
+    this.themeSignal.set(theme);
+    this.applyClass(theme);
+    this.persistOnUser(theme);
+  }
 
-      if (savedTheme === 'light' || savedTheme === 'dark') {
-        return savedTheme;
-      }
-    } catch {
-      // localStorage can be unavailable in restricted browser contexts.
+  applyFromUserTheme(value: unknown): void {
+    const theme = ThemeService.normalize(value);
+    if (theme) {
+      this.setTheme(theme);
     }
+  }
 
-    const prefersDark =
+  useSystemPreference(): void {
+    this.setTheme(this.prefersDark() ? 'dark' : 'light');
+  }
+
+  static normalize(value: unknown): Theme | null {
+    const normalized = String(value ?? '').toLowerCase();
+    if (normalized === 'dark' || normalized === 'light') {
+      return normalized;
+    }
+    return null;
+  }
+
+  private readInitialTheme(): Theme {
+    const stored = this.readUserTheme();
+    if (stored) return stored;
+    return this.prefersDark() ? 'dark' : 'light';
+  }
+
+  private readUserTheme(): Theme | null {
+    if (!isPlatformBrowser(this.platformId)) return null;
+    try {
+      const raw = localStorage.getItem(USER_STORAGE_KEY);
+      if (!raw) return null;
+      return ThemeService.normalize(JSON.parse(raw)?.theme);
+    } catch {
+      return null;
+    }
+  }
+
+  private persistOnUser(theme: Theme): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+    try {
+      const raw = localStorage.getItem(USER_STORAGE_KEY);
+      if (!raw) return;
+      const user = JSON.parse(raw) as Record<string, unknown>;
+      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify({ ...user, theme }));
+    } catch {
+      // Visual theme still works without persistence.
+    }
+  }
+
+  private applyClass(theme: Theme): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+    this.document.documentElement.classList.toggle('dark', theme === 'dark');
+  }
+
+  private prefersDark(): boolean {
+    if (!isPlatformBrowser(this.platformId)) return false;
+    return (
       typeof window.matchMedia === 'function' &&
-      window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-    return prefersDark ? 'dark' : 'light';
-  }
-
-  private setTheme(theme: Theme): void {
-    if (theme === 'dark') {
-      this.renderer.addClass(this.document.documentElement, 'dark');
-    } else {
-      this.renderer.removeClass(this.document.documentElement, 'dark');
-    }
-
-    try {
-      localStorage.setItem('theme', theme);
-    } catch {
-      // The in-memory and visual theme still work without persistence.
-    }
-
-    this.themeSubject.next(theme);
+      window.matchMedia('(prefers-color-scheme: dark)').matches
+    );
   }
 }

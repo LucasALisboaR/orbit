@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { HlmToasterImports } from '@spartan-ng/helm/sonner';
+import { ThemeService } from './theme.service';
 
 @Component({
   selector: 'app-root',
@@ -10,4 +11,6 @@ import { HlmToasterImports } from '@spartan-ng/helm/sonner';
     <hlm-toaster />
   `,
 })
-export class App {}
+export class App {
+  private readonly theme = inject(ThemeService);
+}

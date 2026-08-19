@@ -3,11 +3,10 @@ import { Injectable, PLATFORM_ID, computed, inject, signal } from '@angular/core
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 import { LoginData, User } from '../../src/app/models/user/user.model';
+import { ThemeService } from '../../src/app/theme.service';
 import { HttpService } from '../services/http.service';
 import { AuthResponse } from './auth.model';
-
-const TOKEN_KEY = 'orbit_access_token';
-const USER_KEY = 'orbit_user';
+import { TOKEN_STORAGE_KEY, USER_STORAGE_KEY } from './auth.constants';
 
 @Injectable({
   providedIn: 'root',
@@ -16,6 +15,7 @@ export class AuthService {
   private readonly http = inject(HttpService);
   private readonly router = inject(Router);
   private readonly platformId = inject(PLATFORM_ID);
+  private readonly themeService = inject(ThemeService);
 
   private readonly tokenSignal = signal<string | null>(this.readToken());
   private readonly userSignal = signal<User | null>(this.readUser());
@@ -32,6 +32,7 @@ export class AuthService {
 
   logout(): void {
     this.clearSession();
+    this.themeService.useSystemPreference();
     void this.router.navigate(['/login']);
   }
 
@@ -43,10 +44,12 @@ export class AuthService {
     this.tokenSignal.set(response.accessToken);
     this.userSignal.set(response.user);
 
-    if (!isPlatformBrowser(this.platformId)) return;
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem(TOKEN_STORAGE_KEY, response.accessToken);
+      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(response.user));
+    }
 
-    localStorage.setItem(TOKEN_KEY, response.accessToken);
-    localStorage.setItem(USER_KEY, JSON.stringify(response.user));
+    this.themeService.applyFromUserTheme(response.user.theme);
   }
 
   private clearSession(): void {
@@ -55,19 +58,18 @@ export class AuthService {
 
     if (!isPlatformBrowser(this.platformId)) return;
 
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(USER_KEY);
-    localStorage.clear();
+    localStorage.removeItem(TOKEN_STORAGE_KEY);
+    localStorage.removeItem(USER_STORAGE_KEY);
   }
 
   private readToken(): string | null {
     if (!isPlatformBrowser(this.platformId)) return null;
-    return localStorage.getItem(TOKEN_KEY);
+    return localStorage.getItem(TOKEN_STORAGE_KEY);
   }
 
   private readUser(): User | null {
     if (!isPlatformBrowser(this.platformId)) return null;
-    const raw = localStorage.getItem(USER_KEY);
+    const raw = localStorage.getItem(USER_STORAGE_KEY);
     if (!raw) return null;
     try {
       return JSON.parse(raw) as User;
