@@ -52,6 +52,10 @@
     </div>
     <div hlmDropdownMenuSeparator></div>
     }
+    <button type="button" hlmDropdownMenuItem (triggered)="goToEditProfile()">
+      <ng-icon name="lucideUserRoundPen" />
+      Editar perfil
+    </button>
     <button type="button" hlmDropdownMenuItem (triggered)="toggleTheme()">
       <ng-icon name="lucideSun" class="dark:hidden" />
       <ng-icon name="lucideMoon" class="hidden dark:inline" />
