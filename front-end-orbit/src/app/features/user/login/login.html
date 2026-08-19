@@ -30,10 +30,19 @@
                     <a routerLink="/forget-password" class="font-semibold text-primary cursor-pointer">{{forgetText()}}</a>
                 </div>
                 <hlm-input-group>
-                    <input hlmInputGroupInput [formField]="loginForm.password" type="password"
+                    <input hlmInputGroupInput [formField]="loginForm.password"
+                        [type]="showPassword() ? 'text' : 'password'"
                         [placeholder]="passwordPlaceholder()" />
                     <hlm-input-group-addon>
                         <ng-icon name="lucideLock" />
+                    </hlm-input-group-addon>
+                    <hlm-input-group-addon align="inline-end">
+                        <button hlmInputGroupButton type="button" size="icon-xs"
+                            (click)="togglePasswordVisibility()"
+                            [attr.aria-label]="showPassword() ? 'Ocultar senha' : 'Mostrar senha'"
+                            [attr.aria-pressed]="showPassword()">
+                            <ng-icon [name]="showPassword() ? 'lucideEyeOff' : 'lucideEye'" />
+                        </button>
                     </hlm-input-group-addon>
                 </hlm-input-group>
                 @if (loginForm.password().touched() && loginForm.password().invalid()) {

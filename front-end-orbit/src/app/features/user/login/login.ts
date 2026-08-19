@@ -5,6 +5,9 @@ import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
   lucideMail,
   lucideLock,
+  lucideEye,
+  lucideEyeOff,
+  lucideLoader,
 } from '@ng-icons/lucide';
 import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { CommonModule } from '@angular/common';
@@ -18,7 +21,7 @@ import { toast } from '@spartan-ng/brain/sonner';
 
 @Component({
   selector: 'app-login',
-  providers: [provideIcons({ lucideMail, lucideLock })],
+  providers: [provideIcons({ lucideMail, lucideLock, lucideEye, lucideEyeOff, lucideLoader })],
   imports: [CommonModule, FormField, NgIcon, HlmInputGroupImports, HlmButtonImports, RouterModule],
   templateUrl: './login.html'
 })
@@ -35,6 +38,7 @@ export class Login {
   protected readonly noAccountText = signal('Não tem uma conta?');
   protected readonly noAccountSubmitText = signal('Cadastre-se');
   protected readonly loading = signal(false);
+  protected readonly showPassword = signal(false);
 
   loginModel = signal<LoginData>({
     email: '',
@@ -71,5 +75,9 @@ export class Login {
           toast.error(message);
         },
       });
+  }
+
+  protected togglePasswordVisibility(): void {
+    this.showPassword.update((visible) => !visible);
   }
 }

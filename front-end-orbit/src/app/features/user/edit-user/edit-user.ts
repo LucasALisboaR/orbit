@@ -17,6 +17,8 @@ import {
   lucideShieldPlus,
   lucideTrash2,
   lucideUser,
+  lucideEye,
+  lucideEyeOff,
 } from '@ng-icons/lucide';
 import { toast } from '@spartan-ng/brain/sonner';
 import { HlmBadgeImports } from '@spartan-ng/helm/badge';
@@ -56,6 +58,8 @@ interface EditUserForm {
       lucideLock,
       lucideTrash2,
       lucideShieldPlus,
+      lucideEye,
+      lucideEyeOff,
     }),
   ],
   imports: [
@@ -96,6 +100,7 @@ export class EditUser implements OnInit {
   protected readonly lastNamePlaceholder = signal('Digite seu sobrenome');
   protected readonly emailPlaceholder = signal('Digite seu email');
   protected readonly passwordPlaceholder = signal('Deixe em branco para manter a senha atual');
+  protected readonly showPassword = signal(false);
 
   editModel = signal<EditUserForm>({
     firstName: '',
@@ -313,5 +318,9 @@ export class EditUser implements OnInit {
       return backendMessage;
     }
     return fallback;
+  }
+
+  protected togglePasswordVisibility(): void {
+    this.showPassword.update((visible) => !visible);
   }
 }
