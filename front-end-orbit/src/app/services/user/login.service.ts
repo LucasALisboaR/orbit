@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { debounce, debounceTime, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { ForgetData, LoginData, NewUserData, User } from '../../models/user/user.model';
 import { HttpService } from '../../../../core/services/http.service';
 
@@ -26,8 +26,8 @@ export class UserService {
     return this.http.post('/users', user);
   }
 
-  forgetPassword(forgetData: ForgetData): Observable<unknown> {
-    return this.http.post('/auth/forgot-password', forgetData);
+  forgetPassword(forgetData: ForgetData): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>('/auth/forgot-password', forgetData);
   }
 
   getUserById(userId: string): Observable<User> {
