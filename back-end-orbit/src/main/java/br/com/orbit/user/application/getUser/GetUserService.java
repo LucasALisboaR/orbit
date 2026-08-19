@@ -1,8 +1,9 @@
-package br.com.orbit.user.application;
+package br.com.orbit.user.application.getUser;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.orbit.user.application.UserAccessPolicy;
 import br.com.orbit.user.application.dto.GetUserRequest;
 import br.com.orbit.user.application.dto.UserPresenter;
 import br.com.orbit.user.domain.User;

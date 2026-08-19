@@ -1,4 +1,4 @@
-package br.com.orbit.user.application;
+package br.com.orbit.user.application.loginUser;
 
 import br.com.orbit.user.application.dto.LoginRequest;
 import br.com.orbit.user.application.dto.UserPresenter;

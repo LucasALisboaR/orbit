@@ -1,8 +1,9 @@
-package br.com.orbit.user.application;
+package br.com.orbit.user.application.deleteUser;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.orbit.user.application.UserAccessPolicy;
 import br.com.orbit.user.application.dto.DeleteUserRequest;
 import br.com.orbit.user.domain.User;
 import br.com.orbit.user.domain.UserRepository;

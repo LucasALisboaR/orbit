@@ -1,4 +1,4 @@
-package br.com.orbit.user.application;
+package br.com.orbit.user.application.deleteUser;
 
 import br.com.orbit.user.application.dto.DeleteUserRequest;
 
