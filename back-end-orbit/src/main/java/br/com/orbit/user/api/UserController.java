@@ -14,49 +14,37 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.orbit.user.application.CreateUserUseCase;
 import br.com.orbit.user.application.DeleteUserUseCase;
-import br.com.orbit.user.application.ForgotPasswordUseCase;
 import br.com.orbit.user.application.GetUserUseCase;
-import br.com.orbit.user.application.LoginUserUseCase;
 import br.com.orbit.user.application.dto.CreateUserRequest;
-import br.com.orbit.user.application.dto.ForgotPasswordRequest;
 import br.com.orbit.user.application.dto.GetUserRequest;
-import br.com.orbit.user.application.dto.LoginRequest;
 import br.com.orbit.user.application.dto.MessageResponse;
 import br.com.orbit.user.application.dto.UserPresenter;
 import jakarta.validation.Valid;
 
 /**
- * Camada: API / INTERFACE ADAPTERS (entrada HTTP)
+ * Camada: API / INTERFACE ADAPTERS (entrada HTTP — usuários)
  *
- * Traduz HTTP ↔ casos de uso.
- * Não contém regra de negócio: só valida entrada (@Valid), chama use case e devolve JSON.
+ * Auth (login / forgot-password) ficou em AuthController.
  *
  * Endpoints:
- * - POST /api/users                 → cadastro
- * - GET  /api/users/{id}            → buscar usuário
- * - POST /api/auth/login            → login
- * - POST /api/auth/forgot-password  → esqueci a senha
+ * - POST   /api/users       → cadastro (público)
+ * - GET    /api/users/{id}  → buscar (autenticado)
+ * - DELETE /api/users/{id}  → soft/hard delete (autenticado)
  */
 @RestController
 @RequestMapping("/api")
 public class UserController {
 
     private final CreateUserUseCase createUserUseCase;
-    private final LoginUserUseCase loginUserUseCase;
-    private final ForgotPasswordUseCase forgotPasswordUseCase;
     private final GetUserUseCase getUserUseCase;
     private final DeleteUserUseCase deleteUserUseCase;
 
     public UserController(
             CreateUserUseCase createUserUseCase,
-            LoginUserUseCase loginUserUseCase,
-            ForgotPasswordUseCase forgotPasswordUseCase,
             GetUserUseCase getUserUseCase,
             DeleteUserUseCase deleteUserUseCase
     ) {
         this.createUserUseCase = createUserUseCase;
-        this.loginUserUseCase = loginUserUseCase;
-        this.forgotPasswordUseCase = forgotPasswordUseCase;
         this.getUserUseCase = getUserUseCase;
         this.deleteUserUseCase = deleteUserUseCase;
     }
@@ -71,16 +59,6 @@ public class UserController {
     public ResponseEntity<UserPresenter> getUser(@PathVariable UUID id) {
         UserPresenter user = getUserUseCase.execute(new GetUserRequest(id));
         return ResponseEntity.ok(user);
-    }
-
-    @PostMapping("/auth/login")
-    public ResponseEntity<UserPresenter> login(@Valid @RequestBody LoginRequest request) {
-        return ResponseEntity.ok(loginUserUseCase.execute(request));
-    }
-
-    @PostMapping("/auth/forgot-password")
-    public ResponseEntity<MessageResponse> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
-        return ResponseEntity.ok(forgotPasswordUseCase.execute(request));
     }
 
     @DeleteMapping("/users/{id}")
