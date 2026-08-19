@@ -17,7 +17,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  * Converte exceções de domínio/validação em respostas JSON amigáveis.
  * Mantém controllers limpos (Clean Code: um motivo para mudar).
  */
-@RestControllerAdvice(basePackages = "br.com.orbit.user.api")
+@RestControllerAdvice(basePackages = {
+        "br.com.orbit.user.api",
+        "br.com.orbit.auth.api"
+})
 public class UserExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)

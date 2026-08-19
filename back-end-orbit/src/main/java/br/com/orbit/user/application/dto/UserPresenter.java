@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import br.com.orbit.user.domain.User;
 import br.com.orbit.user.domain.User.UserRole;
+import br.com.orbit.user.domain.User.UserTheme;
 
 /**
  * Camada: APPLICATION (DTO de saída / Presenter)
@@ -18,6 +19,7 @@ public record UserPresenter(
         String lastName,
         String email,
         UserRole role,
+        UserTheme theme,
         boolean isActive,
         OffsetDateTime createdAt,
         OffsetDateTime updatedAt
@@ -30,6 +32,7 @@ public record UserPresenter(
                 user.getLastName(),
                 user.getEmail(),
                 user.getRole(),
+                user.getTheme(),
                 user.isActive(),
                 user.getCreatedAt(),
                 user.getUpdatedAt()

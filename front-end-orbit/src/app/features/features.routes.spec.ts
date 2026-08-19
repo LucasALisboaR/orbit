@@ -1,10 +1,13 @@
 import { featuresRoutes } from './features.routes';
 
 describe('featuresRoutes', () => {
-  it('should redirect the root route to login', () => {
-    expect(featuresRoutes).toContainEqual({
+  it('should wrap authenticated routes in the app shell', () => {
+    const shell = featuresRoutes.find((route) => route.path === '' && route.children);
+
+    expect(shell).toBeTruthy();
+    expect(shell?.children).toContainEqual({
       path: '',
-      redirectTo: 'login',
+      redirectTo: 'home',
       pathMatch: 'full',
     });
   });
