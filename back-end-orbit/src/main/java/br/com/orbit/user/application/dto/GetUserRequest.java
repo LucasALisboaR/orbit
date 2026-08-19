@@ -1,0 +1,16 @@
+package br.com.orbit.user.application.dto;
+
+import java.util.UUID;
+
+import jakarta.validation.constraints.NotNull;
+
+/**
+ * Camada: APPLICATION (DTO de entrada)
+ *
+ * Entrada do caso de uso de buscar usuário por id.
+ */
+public record GetUserRequest(
+        @NotNull(message = "O ID do usuário é obrigatório")
+        UUID id
+) {
+}

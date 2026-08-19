@@ -1,0 +1,67 @@
+<div class="p-4 flex min-h-full flex-col justify-center gap-4">
+    <div class="sm:mx-auto sm:w-full sm:max-w-sm flex flex-col gap-4">
+        <img src="/orbit.png" alt="Your Company" class="mx-auto h-10 w-auto" />
+        <h1 class="text-center text-2xl tracking-tight">Orbit</h1>
+        <h2 class="text-center text-gray-500 tracking-tight">{{ loginText() }}</h2>
+    </div>
+
+    <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+        <form class="space-y-6">
+            <div>
+                <hlm-input-group>
+                    <input hlmInputGroupInput [formField]="loginForm.email" type="email"
+                        [placeholder]="emailPlaceholder()" />
+                    <hlm-input-group-addon>
+                        <ng-icon name="lucideMail" />
+                    </hlm-input-group-addon>
+                </hlm-input-group>
+                @if (loginForm.email().touched() && loginForm.email().invalid()) {
+                <ul class="mt-1 text-sm text-red-500 ml-2 text-end">
+                    @for (error of loginForm.email().errors(); track error) {
+                    <li>{{ error.message }}</li>
+                    }
+                </ul>
+                }
+
+            </div>
+
+            <div>
+                <div class="text-sm text-end mb-0.5">
+                    <a routerLink="/forget-password" class="font-semibold text-primary cursor-pointer">{{forgetText()}}</a>
+                </div>
+                <hlm-input-group>
+                    <input hlmInputGroupInput [formField]="loginForm.password" type="password"
+                        [placeholder]="passwordPlaceholder()" />
+                    <hlm-input-group-addon>
+                        <ng-icon name="lucideLock" />
+                    </hlm-input-group-addon>
+                </hlm-input-group>
+                @if (loginForm.password().touched() && loginForm.password().invalid()) {
+                <ul class="mt-1 text-sm text-red-500 ml-2 text-end">
+                    @for (error of loginForm.password().errors(); track error) {
+                    <li>{{ error.message }}</li>
+                    }
+                </ul>
+                }
+            </div>
+
+        </form>
+        <div class="mt-4">
+            <button type="submit" hlmBtn aria-label="Submit" variant="default" class="flex w-full justify-center"
+                (click)="onSubmitLogin()" [disabled]="!loginForm().valid() || loading()">
+                @if (loading()) {
+                <span class="animate-spin">
+                    <ng-icon name="lucideLoader" />
+                </span>
+                } @else {
+                {{submitText()}}
+                }
+            </button>
+        </div>
+
+        <p class="mt-10 text-center text-sm/6">
+            {{noAccountText()}}
+            <a routerLink="/new-user" class="font-semibold text-primary hover:text-primary/80">{{noAccountSubmitText()}}</a>
+        </p>
+    </div>
+</div>

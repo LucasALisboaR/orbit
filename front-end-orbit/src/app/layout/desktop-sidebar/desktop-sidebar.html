@@ -1,0 +1,46 @@
+<hlm-sidebar collapsible="icon">
+  <div hlmSidebarHeader>
+    <div
+      class="flex items-center gap-2 px-1 py-1.5 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0"
+    >
+      <img
+        src="/orbit.png"
+        alt="Orbit"
+        class="size-8 max-w-none shrink-0 aspect-square object-contain"
+      />
+      <div class="grid flex-1 text-start leading-tight group-data-[collapsible=icon]:hidden">
+        <span class="truncate text-sm font-semibold">Orbit</span>
+        <span class="text-muted-foreground truncate text-xs">Workspace</span>
+      </div>
+    </div>
+  </div>
+
+  <div hlmSidebarContent>
+    <div hlmSidebarGroup>
+      <div hlmSidebarGroupContent>
+        <ul hlmSidebarMenu>
+          @for (item of navItems(); track item.url) {
+          <li hlmSidebarMenuItem>
+            <a
+              hlmSidebarMenuButton
+              class="data-active:bg-primary data-active:text-primary-foreground hover:data-active:bg-primary hover:data-active:text-primary-foreground"
+              [routerLink]="item.url"
+              routerLinkActive
+              #rla="routerLinkActive"
+              [isActive]="rla.isActive"
+              [tooltip]="item.title"
+            >
+              <ng-icon [name]="item.icon" />
+              <span>{{ item.title }}</span>
+            </a>
+          </li>
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div hlmSidebarFooter>
+    <app-user-account-menu variant="sidebar" side="top" align="start" />
+  </div>
+</hlm-sidebar>

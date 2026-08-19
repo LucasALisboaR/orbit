@@ -1,0 +1,66 @@
+@if (variant() === 'sidebar') {
+<ul hlmSidebarMenu>
+  <li hlmSidebarMenuItem>
+    <button
+      type="button"
+      hlmSidebarMenuButton
+      size="lg"
+      [hlmDropdownMenuTrigger]="userMenu"
+      [side]="side()"
+      [align]="align()"
+    >
+      <span
+        class="bg-secondary text-sidebar-primary-foreground flex size-8 shrink-0 items-center justify-center rounded-lg text-xs font-semibold"
+      >
+        {{ userInitials() }}
+      </span>
+      @if (user(); as currentUser) {
+      <div class="grid flex-1 text-start leading-tight group-data-[collapsible=icon]:hidden">
+        <span class="truncate font-semibold">{{ currentUser.firstName }} {{ currentUser.lastName }}</span>
+        <span class="text-muted-foreground truncate text-xs">{{ currentUser.email }}</span>
+      </div>
+      }
+      <ng-icon name="lucideChevronsUpDown" class="ms-auto group-data-[collapsible=icon]:hidden" />
+    </button>
+  </li>
+</ul>
+} @else {
+<button
+  type="button"
+  class="text-muted-foreground flex w-full flex-col items-center justify-center gap-1 text-xs"
+  [hlmDropdownMenuTrigger]="userMenu"
+  [side]="side()"
+  [align]="align()"
+>
+  <span
+    class="bg-secondary text-sidebar-primary-foreground flex size-6 items-center justify-center rounded-full text-[10px] font-semibold"
+  >
+    {{ userInitials() }}
+  </span>
+  <span>Conta</span>
+</button>
+}
+
+<ng-template #userMenu>
+  <div hlmDropdownMenu class="min-w-56">
+    @if (user(); as currentUser) {
+    <div hlmDropdownMenuLabel class="font-normal">
+      <div class="flex flex-col">
+        <span class="text-sm font-medium">{{ currentUser.firstName }} {{ currentUser.lastName }}</span>
+        <span class="text-muted-foreground text-xs">{{ currentUser.email }}</span>
+      </div>
+    </div>
+    <div hlmDropdownMenuSeparator></div>
+    }
+    <button type="button" hlmDropdownMenuItem (triggered)="toggleTheme()">
+      <ng-icon name="lucideSun" class="dark:hidden" />
+      <ng-icon name="lucideMoon" class="hidden dark:inline" />
+      Alternar tema
+    </button>
+    <div hlmDropdownMenuSeparator></div>
+    <button type="button" hlmDropdownMenuItem variant="destructive" (triggered)="logout()">
+      <ng-icon name="lucideLogOut" />
+      Sair
+    </button>
+  </div>
+</ng-template>

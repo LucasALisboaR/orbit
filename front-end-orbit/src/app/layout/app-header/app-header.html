@@ -1,0 +1,10 @@
+<header
+  class="bg-background sticky top-0 z-20 flex h-12 items-center gap-2 border-b px-3 md:px-4"
+>
+  @if (!isMobile()) {
+  <button hlmSidebarTrigger type="button"></button>
+  } @else {
+  <img src="/orbit.png" alt="Orbit" class="size-7 max-w-none shrink-0 aspect-square object-contain" />
+  <span class="text-sm font-semibold">Orbit</span>
+  }
+</header>
