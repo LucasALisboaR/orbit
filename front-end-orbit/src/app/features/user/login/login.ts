@@ -9,9 +9,10 @@ import {
 import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { CommonModule } from '@angular/common';
 import { email, form, FormField, minLength, required } from '@angular/forms/signals';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { LoginData } from '../../../models/user/user.model';
 import { AuthService } from '../../../../../core/auth/auth.service';
+import { safeInternalUrl } from '../../../../../core/auth/safe-internal-url';
 import { finalize } from 'rxjs';
 import { toast } from '@spartan-ng/brain/sonner';
 
@@ -24,6 +25,7 @@ import { toast } from '@spartan-ng/brain/sonner';
 export class Login {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
   protected readonly loginText = signal('Faça o login na sua conta');
   protected readonly emailPlaceholder = signal('Digite seu email');
@@ -57,7 +59,9 @@ export class Login {
       .subscribe({
         next: () => {
           toast.success('Login realizado com sucesso!');
-          void this.router.navigate(['/home']);
+          void this.router.navigateByUrl(
+            safeInternalUrl(this.route.snapshot.queryParamMap.get('returnUrl')),
+          );
         },
         error: (error: HttpErrorResponse) => {
           const message =

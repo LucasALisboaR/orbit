@@ -22,6 +22,10 @@ export class HttpService {
     return this.http.put<T>(`${this.apiUrl}${url}`, body);
   }
 
+  patch<T, B = unknown>(url: string, body: B): Observable<T> {
+    return this.http.patch<T>(`${this.apiUrl}${url}`, body);
+  }
+
   delete<T>(url: string): Observable<T> {
     return this.http.delete<T>(`${this.apiUrl}${url}`);
   }

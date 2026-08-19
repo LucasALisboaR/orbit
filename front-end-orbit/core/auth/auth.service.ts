@@ -40,6 +40,16 @@ export class AuthService {
     return this.tokenSignal();
   }
 
+  setSessionUser(user: User): void {
+    this.userSignal.set(user);
+
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
+    }
+
+    this.themeService.applyFromUserTheme(user.theme);
+  }
+
   private persistSession(response: AuthResponse): void {
     this.tokenSignal.set(response.accessToken);
     this.userSignal.set(response.user);
