@@ -59,4 +59,13 @@ describe('AppShell', () => {
     expect(fixture.nativeElement.querySelector('app-mobile-nav')).toBeTruthy();
     expect(fixture.nativeElement.querySelector('app-desktop-sidebar')).toBeNull();
   });
+
+  it('should keep page content in a scroll area outside the header', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    const scrollArea = compiled.querySelector('main .overflow-y-auto');
+
+    expect(scrollArea).toBeTruthy();
+    expect(scrollArea?.querySelector('app-header')).toBeNull();
+    expect(compiled.querySelector('app-header')).toBeTruthy();
+  });
 });
