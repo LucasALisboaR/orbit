@@ -19,11 +19,15 @@ import br.com.orbit.user.application.delete.DeleteUserUseCase;
 import br.com.orbit.user.application.dto.ActorRequest;
 import br.com.orbit.user.application.dto.CreateUserRequest;
 import br.com.orbit.user.application.dto.DeleteUserRequest;
+import br.com.orbit.user.application.dto.EditUserRequest;
 import br.com.orbit.user.application.dto.GetUserRequest;
 import br.com.orbit.user.application.dto.MessageResponse;
 import br.com.orbit.user.application.dto.UserPresenter;
+import br.com.orbit.user.application.edit.EditUserUseCase;
 import br.com.orbit.user.application.list.GetUserUseCase;
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.PutMapping;
+
 
 /**
  * Camada: API / INTERFACE ADAPTERS (entrada HTTP — usuários)
@@ -33,6 +37,7 @@ import jakarta.validation.Valid;
  * Endpoints:
  * - POST   /api/users       → cadastro (público)
  * - GET    /api/users/{id}  → buscar (dono ou ADMIN)
+ * - PUT    /api/users/{id}  → editar perfil (dono ou ADMIN)
  * - DELETE /api/users/{id}  → desativar (dono ou ADMIN)
  */
 @RestController
@@ -42,15 +47,18 @@ public class UserController {
     private final CreateUserUseCase createUserUseCase;
     private final GetUserUseCase getUserUseCase;
     private final DeleteUserUseCase deleteUserUseCase;
+    private final EditUserUseCase editUserUseCase;
 
     public UserController(
             CreateUserUseCase createUserUseCase,
             GetUserUseCase getUserUseCase,
-            DeleteUserUseCase deleteUserUseCase
+            DeleteUserUseCase deleteUserUseCase,
+            EditUserUseCase editUserUseCase
     ) {
         this.createUserUseCase = createUserUseCase;
         this.getUserUseCase = getUserUseCase;
         this.deleteUserUseCase = deleteUserUseCase;
+        this.editUserUseCase = editUserUseCase;
     }
 
     @PostMapping("/users")
@@ -63,6 +71,16 @@ public class UserController {
     public ResponseEntity<UserPresenter> getUser(@PathVariable UUID id, Authentication authentication) {
         UserPresenter user = getUserUseCase.execute(new GetUserRequest(id, actorFrom(authentication)));
         return ResponseEntity.ok(user);
+    }
+
+    @PutMapping("/users/{id}")
+    public ResponseEntity<UserPresenter> updateUser(
+            @PathVariable UUID id,
+            @Valid @RequestBody EditUserRequest request,
+            Authentication authentication
+    ) {
+        UserPresenter updated = editUserUseCase.execute(request, id, actorFrom(authentication));
+        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/users/{id}")

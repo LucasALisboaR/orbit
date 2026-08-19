@@ -51,7 +51,7 @@ public class CreateUserService implements CreateUserUseCase {
                 UserTheme.LIGHT
         );
 
-        User saved = userRepository.save(user);
+        User saved = userRepository.persist(user);
         return UserPresenter.from(saved);
     }
 }

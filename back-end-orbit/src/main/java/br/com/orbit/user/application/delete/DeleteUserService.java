@@ -34,6 +34,6 @@ public class DeleteUserService implements DeleteUserUseCase {
             throw new IllegalArgumentException("Usuário já está inativo");
         }
         user.deactivate();
-        userRepository.save(user);
+        userRepository.persist(user);
     }
 }

@@ -96,14 +96,14 @@ public class User {
         validate();
     }
 
-    public void update(String firstName, String lastName, String email, UserRole role, UserTheme theme) {
+    public void update(String firstName, String lastName, String email, String passwordHash, UserTheme theme) {
         if (!isActive) {
             throw new IllegalArgumentException("Usuário inativo não pode ser atualizado.");
         }
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email == null ? null : email.toLowerCase().trim();
-        setRole(role);
+        this.passwordHash = passwordHash;
         setTheme(theme);
         validate();
     }

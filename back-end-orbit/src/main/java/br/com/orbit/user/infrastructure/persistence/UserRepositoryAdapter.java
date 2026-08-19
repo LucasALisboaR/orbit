@@ -24,7 +24,7 @@ public class UserRepositoryAdapter implements UserRepository {
     }
 
     @Override
-    public User save(User user) {
+    public User persist(User user) {
         return springDataUserRepository.save(user);
     }
 
