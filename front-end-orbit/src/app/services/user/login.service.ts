@@ -30,7 +30,6 @@ export class UserService {
     return this.http.get<User[]>('/users');
   }
 
-  /** Contrato ainda não existe no back: PUT /users/{id} */
   updateUser(userId: string, data: UpdateUserData): Observable<User> {
     return this.http.put<User>(`/users/${userId}`, data);
   }

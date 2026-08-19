@@ -313,7 +313,12 @@ export class EditUser implements OnInit {
   }
 
   private resolveErrorMessage(error: HttpErrorResponse, fallback: string): string {
-    const backendMessage = error.error?.message;
+    const payload = error.error as { message?: string; fields?: Record<string, string> } | null;
+    const fieldMessages = payload?.fields ? Object.values(payload.fields).filter(Boolean) : [];
+    if (fieldMessages.length) {
+      return fieldMessages.join(' ');
+    }
+    const backendMessage = payload?.message;
     if (typeof backendMessage === 'string' && backendMessage.trim()) {
       return backendMessage;
     }

@@ -2,7 +2,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { Injectable, PLATFORM_ID, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
-import { LoginData, User } from '../../src/app/models/user/user.model';
+import { fromApiTheme, LoginData, User } from '../../src/app/models/user/user.model';
 import { ThemeService } from '../../src/app/theme.service';
 import { HttpService } from '../services/http.service';
 import { AuthResponse } from './auth.model';
@@ -41,25 +41,31 @@ export class AuthService {
   }
 
   setSessionUser(user: User): void {
-    this.userSignal.set(user);
+    const sessionUser = this.normalizeUser(user);
+    this.userSignal.set(sessionUser);
 
     if (isPlatformBrowser(this.platformId)) {
-      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
+      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(sessionUser));
     }
 
-    this.themeService.applyFromUserTheme(user.theme);
+    this.themeService.applyFromUserTheme(sessionUser.theme);
   }
 
   private persistSession(response: AuthResponse): void {
+    const sessionUser = this.normalizeUser(response.user);
     this.tokenSignal.set(response.accessToken);
-    this.userSignal.set(response.user);
+    this.userSignal.set(sessionUser);
 
     if (isPlatformBrowser(this.platformId)) {
       localStorage.setItem(TOKEN_STORAGE_KEY, response.accessToken);
-      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(response.user));
+      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(sessionUser));
     }
 
-    this.themeService.applyFromUserTheme(response.user.theme);
+    this.themeService.applyFromUserTheme(sessionUser.theme);
+  }
+
+  private normalizeUser(user: User): User {
+    return { ...user, theme: fromApiTheme(user.theme) };
   }
 
   private clearSession(): void {
@@ -82,7 +88,7 @@ export class AuthService {
     const raw = localStorage.getItem(USER_STORAGE_KEY);
     if (!raw) return null;
     try {
-      return JSON.parse(raw) as User;
+      return this.normalizeUser(JSON.parse(raw) as User);
     } catch {
       return null;
     }
