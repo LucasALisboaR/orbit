@@ -85,7 +85,7 @@ public class User {
      * Factory/construtor de domínio: único caminho "oficial" para criar um User válido.
      * passwordHash já deve vir criptografado (BCrypt) pela camada de application/infrastructure.
      */
-    public User(String firstName, String lastName, String email, String passwordHash, UserTheme theme) {
+    private User(String firstName, String lastName, String email, String passwordHash, UserTheme theme) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email == null ? null : email.toLowerCase().trim();
@@ -94,6 +94,10 @@ public class User {
         setRole(UserRole.BASIC);
         setTheme(theme);
         validate();
+    }
+
+    public static User create(String firstName, String lastName, String email, String passwordHash, UserTheme theme) {
+        return new User(firstName, lastName, email, passwordHash, theme);
     }
 
     public void update(String firstName, String lastName, String email, String passwordHash, UserTheme theme) {

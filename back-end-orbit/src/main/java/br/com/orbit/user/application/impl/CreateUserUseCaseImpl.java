@@ -12,6 +12,7 @@ import br.com.orbit.user.domain.UserRepository;
 import br.com.orbit.user.domain.User.UserTheme;
 
 /**
+ * Como o sistema faz 
  * Camada: APPLICATION (caso de uso — implementação)
  *
  * Orquestra o fluxo de cadastro:
@@ -46,7 +47,7 @@ public class CreateUserUseCaseImpl implements CreateUserUseCase {
         }
 
         String passwordHash = passwordHasher.hash(request.password());
-        User user = new User(
+        User user = User.create(
                 request.firstName().trim(),
                 request.lastName().trim(),
                 email,
