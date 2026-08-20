@@ -3,10 +3,14 @@
   <app-desktop-sidebar />
   }
 
-  <main hlmSidebarInset class="flex h-full min-h-0 flex-col overflow-hidden">
+  <main hlmSidebarInset class="!bg-transparent flex h-full min-h-0 flex-col overflow-hidden">
     <app-header />
-    <div class="min-h-0 flex-1 overflow-y-auto p-4 pb-20 md:p-6 md:pb-6">
-      <router-outlet />
+    <div class="flex min-h-0 flex-1 justify-center overflow-y-auto p-4 pb-20 md:p-6 md:pb-6">
+      <section hlmCard class="relative z-10 h-fit w-fit max-w-full shadow-sm">
+        <div hlmCardContent class="py-(--card-spacing)">
+          <router-outlet />
+        </div>
+      </section>
     </div>
   </main>
 </div>

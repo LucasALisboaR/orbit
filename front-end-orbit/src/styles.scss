@@ -98,3 +98,78 @@
     @apply bg-background text-foreground transition-colors;
   }
 }
+
+/* Full-viewport override do @omnedia/ngx-meteors */
+.orbit-meteors {
+  max-width: none !important;
+  width: 100%;
+  min-height: 100svh;
+  background: transparent;
+  overflow: visible !important;
+}
+
+/* Camada fixa cobrindo a viewport inteira */
+.orbit-meteors .om-meteors-background {
+  position: fixed !important;
+  inset: 0;
+  width: 100vw;
+  height: 100svh;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* A lib só anda 500px — estende o trajeto para cruzar a tela toda */
+.orbit-meteors .om-meteor {
+  display: none; /* esconde a maioria — efeito raro */
+  animation-name: orbit-meteor-full !important;
+}
+
+/* Só alguns meteoros ativos, bem espaçados */
+.orbit-meteors .om-meteor:nth-child(2),
+.orbit-meteors .om-meteor:nth-child(11),
+.orbit-meteors .om-meteor:nth-child(19),
+.orbit-meteors .om-meteor:nth-child(27) {
+  display: block;
+  animation-duration: 9s !important;
+}
+
+.orbit-meteors .om-meteor:nth-child(2) {
+  top: -2% !important;
+  animation-delay: 0s !important;
+}
+
+.orbit-meteors .om-meteor:nth-child(11) {
+  top: 22% !important;
+  animation-delay: 2.8s !important;
+}
+
+.orbit-meteors .om-meteor:nth-child(19) {
+  top: 48% !important;
+  animation-delay: 5.5s !important;
+}
+
+.orbit-meteors .om-meteor:nth-child(27) {
+  top: 68% !important;
+  animation-delay: 7.2s !important;
+}
+
+@keyframes orbit-meteor-full {
+  0% {
+    opacity: 0;
+    transform: rotate(var(--om-meteors-rotate, 215deg)) translate(0);
+  }
+  8% {
+    opacity: 1;
+  }
+  55% {
+    opacity: 1;
+  }
+  75%,
+  100% {
+    opacity: 0;
+    transform: rotate(var(--om-meteors-rotate, 215deg)) translate(-160vmax);
+  }
+}
+
+
