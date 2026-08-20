@@ -1,11 +1,12 @@
-package br.com.orbit.user.application.list;
+package br.com.orbit.user.application.impl;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.orbit.user.application.UserAccessPolicy;
 import br.com.orbit.user.application.dto.GetUserRequest;
 import br.com.orbit.user.application.dto.UserPresenter;
+import br.com.orbit.user.application.shared.UserAccessPolicy;
+import br.com.orbit.user.application.usecase.GetUserUseCase;
 import br.com.orbit.user.domain.User;
 import br.com.orbit.user.domain.UserRepository;
 
@@ -15,11 +16,11 @@ import br.com.orbit.user.domain.UserRepository;
  * Busca um usuário por id e devolve UserPresenter.
  */
 @Service
-public class GetUserService implements GetUserUseCase {
+public class GetUserUseCaseImpl implements GetUserUseCase {
 
     private final UserRepository userRepository;
 
-    public GetUserService(UserRepository userRepository) {
+    public GetUserUseCaseImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

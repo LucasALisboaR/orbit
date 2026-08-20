@@ -1,6 +1,5 @@
-package br.com.orbit.user.application.list;
+package br.com.orbit.user.application.usecase;
 import java.util.List;
-import java.util.UUID;
 
 import br.com.orbit.user.application.dto.ActorRequest;
 import br.com.orbit.user.application.dto.UserPresenter;

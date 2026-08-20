@@ -1,21 +1,22 @@
-package br.com.orbit.user.application.list;
+package br.com.orbit.user.application.impl;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import br.com.orbit.user.application.UserAccessPolicy;
 import br.com.orbit.user.application.dto.ActorRequest;
 import br.com.orbit.user.application.dto.UserPresenter;
+import br.com.orbit.user.application.shared.UserAccessPolicy;
+import br.com.orbit.user.application.usecase.GetAllUsersUseCase;
 import br.com.orbit.user.domain.User;
 import br.com.orbit.user.domain.UserRepository;
 
 @Service
-public class GetAllUsersService implements GetAllUsersUseCase {
+public class GetAllUsersUseCaseImpl implements GetAllUsersUseCase {
     final UserRepository userRepository;
 
-    public GetAllUsersService(UserRepository userRepository) {
+    public GetAllUsersUseCaseImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

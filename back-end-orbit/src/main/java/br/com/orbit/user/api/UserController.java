@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.orbit.user.application.create.CreateUserUseCase;
-import br.com.orbit.user.application.delete.DeleteUserUseCase;
 import br.com.orbit.user.application.dto.ActorRequest;
 import br.com.orbit.user.application.dto.CreateUserRequest;
 import br.com.orbit.user.application.dto.DeleteUserRequest;
@@ -25,10 +23,12 @@ import br.com.orbit.user.application.dto.EditUserRoleRequest;
 import br.com.orbit.user.application.dto.GetUserRequest;
 import br.com.orbit.user.application.dto.MessageResponse;
 import br.com.orbit.user.application.dto.UserPresenter;
-import br.com.orbit.user.application.edit.EditUserRoleUseCase;
-import br.com.orbit.user.application.edit.EditUserUseCase;
-import br.com.orbit.user.application.list.GetAllUsersUseCase;
-import br.com.orbit.user.application.list.GetUserUseCase;
+import br.com.orbit.user.application.usecase.CreateUserUseCase;
+import br.com.orbit.user.application.usecase.DeleteUserUseCase;
+import br.com.orbit.user.application.usecase.EditUserRoleUseCase;
+import br.com.orbit.user.application.usecase.EditUserUseCase;
+import br.com.orbit.user.application.usecase.GetAllUsersUseCase;
+import br.com.orbit.user.application.usecase.GetUserUseCase;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PutMapping;
 

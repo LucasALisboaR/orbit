@@ -1,4 +1,4 @@
-package br.com.orbit.user.application.edit;
+package br.com.orbit.user.application.usecase;
 
 import java.util.UUID;
 

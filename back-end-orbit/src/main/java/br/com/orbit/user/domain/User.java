@@ -134,7 +134,6 @@ public class User {
         this.theme = theme;
     }
 
-    /** Invariantes do agregado User. */
     public void validate() {
         if (firstName == null || firstName.isBlank()) {
             throw new IllegalArgumentException("O nome é obrigatório");

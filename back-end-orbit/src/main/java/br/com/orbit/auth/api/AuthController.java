@@ -12,8 +12,8 @@ import br.com.orbit.user.application.dto.ForgotPasswordRequest;
 import br.com.orbit.user.application.dto.LoginRequest;
 import br.com.orbit.user.application.dto.MessageResponse;
 import br.com.orbit.user.application.dto.UserPresenter;
-import br.com.orbit.user.application.forget.ForgotPasswordUseCase;
-import br.com.orbit.user.application.login.LoginUserUseCase;
+import br.com.orbit.user.application.usecase.ForgotPasswordUseCase;
+import br.com.orbit.user.application.usecase.LoginUserUseCase;
 import jakarta.validation.Valid;
 
 /**

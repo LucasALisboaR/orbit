@@ -1,10 +1,11 @@
-package br.com.orbit.user.application.forget;
+package br.com.orbit.user.application.impl;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.orbit.user.application.dto.ForgotPasswordRequest;
 import br.com.orbit.user.application.dto.MessageResponse;
+import br.com.orbit.user.application.usecase.ForgotPasswordUseCase;
 import br.com.orbit.user.domain.UserRepository;
 
 /**
@@ -16,14 +17,14 @@ import br.com.orbit.user.domain.UserRepository;
  * Sempre retorna a mesma mensagem para não vazar se o email está cadastrado.
  */
 @Service
-public class ForgotPasswordService implements ForgotPasswordUseCase {
+public class ForgotPasswordUseCaseImpl implements ForgotPasswordUseCase {
 
     private static final String GENERIC_MESSAGE =
             "Se o email estiver cadastrado, enviaremos instruções para redefinir a senha.";
 
     private final UserRepository userRepository;
 
-    public ForgotPasswordService(UserRepository userRepository) {
+    public ForgotPasswordUseCaseImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

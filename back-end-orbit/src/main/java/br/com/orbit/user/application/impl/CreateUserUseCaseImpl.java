@@ -1,10 +1,11 @@
-package br.com.orbit.user.application.create;
+package br.com.orbit.user.application.impl;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.orbit.user.application.dto.CreateUserRequest;
 import br.com.orbit.user.application.dto.UserPresenter;
+import br.com.orbit.user.application.usecase.CreateUserUseCase;
 import br.com.orbit.user.domain.PasswordHasher;
 import br.com.orbit.user.domain.User;
 import br.com.orbit.user.domain.UserRepository;
@@ -22,13 +23,15 @@ import br.com.orbit.user.domain.User.UserTheme;
  *
  * Não conhece HTTP nem detalhes do PostgreSQL.
  */
+
+// alterar o nome para UseCaseImpl
 @Service
-public class CreateUserService implements CreateUserUseCase {
+public class CreateUserUseCaseImpl implements CreateUserUseCase {
 
     private final UserRepository userRepository;
     private final PasswordHasher passwordHasher;
 
-    public CreateUserService(UserRepository userRepository, PasswordHasher passwordHasher) {
+    public CreateUserUseCaseImpl(UserRepository userRepository, PasswordHasher passwordHasher) {
         this.userRepository = userRepository;
         this.passwordHasher = passwordHasher;
     }

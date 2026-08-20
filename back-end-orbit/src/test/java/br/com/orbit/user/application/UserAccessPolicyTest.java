@@ -7,6 +7,9 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 
+import br.com.orbit.user.application.shared.ForbiddenException;
+import br.com.orbit.user.application.shared.UserAccessPolicy;
+
 class UserAccessPolicyTest {
 
     private final UUID actor = UUID.fromString("11111111-1111-1111-1111-111111111111");

@@ -1,14 +1,15 @@
-package br.com.orbit.user.application.edit;
+package br.com.orbit.user.application.impl;
 
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.orbit.user.application.UserAccessPolicy;
 import br.com.orbit.user.application.dto.ActorRequest;
 import br.com.orbit.user.application.dto.EditUserRequest;
 import br.com.orbit.user.application.dto.UserPresenter;
+import br.com.orbit.user.application.shared.UserAccessPolicy;
+import br.com.orbit.user.application.usecase.EditUserUseCase;
 import br.com.orbit.user.domain.PasswordHasher;
 import br.com.orbit.user.domain.User;
 import br.com.orbit.user.domain.UserRepository;
@@ -28,12 +29,12 @@ import br.com.orbit.user.domain.User.UserTheme;
  * Não conhece HTTP nem detalhes do PostgreSQL.
  */
 @Service
-public class EditUserService implements EditUserUseCase {
+public class EditUserUseCaseImpl implements EditUserUseCase {
 
     private final UserRepository userRepository;
     private final PasswordHasher passwordHasher;
 
-    public EditUserService(UserRepository userRepository, PasswordHasher passwordHasher) {
+    public EditUserUseCaseImpl(UserRepository userRepository, PasswordHasher passwordHasher) {
         this.userRepository = userRepository;
         this.passwordHasher = passwordHasher;
     }
