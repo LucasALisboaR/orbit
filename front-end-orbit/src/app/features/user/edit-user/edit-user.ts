@@ -14,6 +14,7 @@ import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
   lucideLock,
   lucideMail,
+  lucideShieldMinus,
   lucideShieldPlus,
   lucideTrash2,
   lucideUser,
@@ -37,6 +38,7 @@ import {
   toApiTheme,
   UpdateUserData,
   User,
+  UserRole,
   UserTheme,
 } from '../../../models/user/user.model';
 import { UserService } from '../../../services/user/login.service';
@@ -58,6 +60,7 @@ interface EditUserForm {
       lucideLock,
       lucideTrash2,
       lucideShieldPlus,
+      lucideShieldMinus,
       lucideEye,
       lucideEyeOff,
     }),
@@ -89,9 +92,11 @@ export class EditUser implements OnInit {
   protected readonly usersLoadFailed = signal(false);
   protected readonly pendingDelete = signal<User | null>(null);
   protected readonly pendingPromote = signal<User | null>(null);
+  protected readonly pendingDemote = signal<User | null>(null);
   private readonly deleteDialog = viewChild<HlmDialog>('deleteDialog');
   private readonly selfDeleteDialog = viewChild<HlmDialog>('selfDeleteDialog');
   private readonly promoteDialog = viewChild<HlmDialog>('promoteDialog');
+  private readonly demoteDialog = viewChild<HlmDialog>('demoteDialog');
 
   protected readonly sessionUser = this.auth.user;
   protected readonly isAdmin = computed(() => isAdminRole(this.sessionUser()?.role));
@@ -206,6 +211,12 @@ export class EditUser implements OnInit {
     this.promoteDialog()?.open();
   }
 
+  confirmDemote(user: User): void {
+    if (user.id === this.sessionUser()?.id) return;
+    this.pendingDemote.set(user);
+    this.demoteDialog()?.open();
+  }
+
   onThemeToggle(dark: boolean): void {
     const theme = dark ? UserTheme.DARK : UserTheme.LIGHT;
     this.editModel.update((model) => ({ ...model, theme }));
@@ -277,14 +288,44 @@ export class EditUser implements OnInit {
         }),
       )
       .subscribe({
-        next: (updated) => {
+        next: (response) => {
           this.users.update((list) =>
-            list.map((item) => (item.id === updated.id ? updated : item)),
+            list.map((item) =>
+              item.id === user.id ? { ...item, role: UserRole.ADMIN } : item,
+            ),
           );
-          toast.success(`${updated.firstName} agora é administrador.`);
+          toast.success(response.message || `${user.firstName} agora é administrador.`);
         },
         error: (error: HttpErrorResponse) => {
           toast.error(this.resolveErrorMessage(error, 'Não foi possível promover o usuário.'));
+        },
+      });
+  }
+
+  demotePendingUser(): void {
+    const user = this.pendingDemote();
+    if (!user || this.actingUserId() || user.id === this.sessionUser()?.id) return;
+
+    this.actingUserId.set(user.id);
+    this.userService
+      .demoteToBasic(user.id)
+      .pipe(
+        finalize(() => {
+          this.actingUserId.set(null);
+          this.demoteDialog()?.close();
+        }),
+      )
+      .subscribe({
+        next: (response) => {
+          this.users.update((list) =>
+            list.map((item) =>
+              item.id === user.id ? { ...item, role: UserRole.BASIC } : item,
+            ),
+          );
+          toast.success(response.message || `${user.firstName} voltou ao acesso básico.`);
+        },
+        error: (error: HttpErrorResponse) => {
+          toast.error(this.resolveErrorMessage(error, 'Não foi possível remover o admin.'));
         },
       });
   }
@@ -305,11 +346,16 @@ export class EditUser implements OnInit {
       .pipe(finalize(() => this.loadingUsers.set(false)))
       .subscribe({
         next: (users) => this.users.set(users),
-        error: () => {
+        error: (error: HttpErrorResponse) => {
           this.users.set([]);
           this.usersLoadFailed.set(true);
+          toast.error(this.resolveErrorMessage(error, 'Não foi possível carregar os usuários.'));
         },
       });
+  }
+
+  protected retryLoadUsers(): void {
+    this.loadUsers();
   }
 
   private resolveErrorMessage(error: HttpErrorResponse, fallback: string): string {

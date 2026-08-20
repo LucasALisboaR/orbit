@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { ForgetData, NewUserData, UpdateUserData, User, UserRole } from '../../models/user/user.model';
+import { map, Observable } from 'rxjs';
+import { ForgetData, fromApiTheme, NewUserData, UpdateUserData, User, UserRole } from '../../models/user/user.model';
 import { HttpService } from '../../../../core/services/http.service';
 
 @Injectable({
@@ -18,24 +18,42 @@ export class UserService {
   }
 
   getUserById(userId: string): Observable<User> {
-    return this.http.get<User>(`/users/${userId}`);
+    return this.http.get<User>(`/users/${userId}`).pipe(map((user) => this.normalizeUser(user)));
   }
 
   deleteUser(userId: string): Observable<{ message: string }> {
     return this.http.delete<{ message: string }>(`/users/${userId}`);
   }
 
-  /** Contrato ainda não existe no back: GET /users */
   listUsers(): Observable<User[]> {
-    return this.http.get<User[]>('/users');
+    return this.http
+      .get<User[]>('/users')
+      .pipe(map((users) => users.map((user) => this.normalizeUser(user))));
   }
 
   updateUser(userId: string, data: UpdateUserData): Observable<User> {
-    return this.http.put<User>(`/users/${userId}`, data);
+    return this.http
+      .put<User>(`/users/${userId}`, data)
+      .pipe(map((user) => this.normalizeUser(user)));
   }
 
-  /** Contrato ainda não existe no back: PATCH /users/{id}/role */
-  promoteToAdmin(userId: string): Observable<User> {
-    return this.http.patch<User>(`/users/${userId}/role`, { role: UserRole.ADMIN });
+  updateUserRole(userId: string, role: UserRole): Observable<{ message: string }> {
+    return this.http.put<{ message: string }>(`/users/${userId}/role`, { role });
+  }
+
+  promoteToAdmin(userId: string): Observable<{ message: string }> {
+    return this.updateUserRole(userId, UserRole.ADMIN);
+  }
+
+  demoteToBasic(userId: string): Observable<{ message: string }> {
+    return this.updateUserRole(userId, UserRole.BASIC);
+  }
+
+  private normalizeUser(user: User): User {
+    return {
+      ...user,
+      theme: fromApiTheme(user.theme),
+      role: String(user.role ?? '').toUpperCase() as UserRole,
+    };
   }
 }
