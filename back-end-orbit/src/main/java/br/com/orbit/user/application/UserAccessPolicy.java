@@ -18,4 +18,11 @@ public final class UserAccessPolicy {
         }
         throw new ForbiddenException(message);
     }
+
+    public static void requireAdmin(UUID actorId, boolean actorIsAdmin, String message) {
+        if (actorIsAdmin) {
+            return;
+        }
+        throw new ForbiddenException(message);
+    }
 }

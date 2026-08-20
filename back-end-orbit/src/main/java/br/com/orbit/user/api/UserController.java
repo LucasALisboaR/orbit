@@ -1,5 +1,6 @@
 package br.com.orbit.user.api;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
@@ -20,10 +21,13 @@ import br.com.orbit.user.application.dto.ActorRequest;
 import br.com.orbit.user.application.dto.CreateUserRequest;
 import br.com.orbit.user.application.dto.DeleteUserRequest;
 import br.com.orbit.user.application.dto.EditUserRequest;
+import br.com.orbit.user.application.dto.EditUserRoleRequest;
 import br.com.orbit.user.application.dto.GetUserRequest;
 import br.com.orbit.user.application.dto.MessageResponse;
 import br.com.orbit.user.application.dto.UserPresenter;
+import br.com.orbit.user.application.edit.EditUserRoleUseCase;
 import br.com.orbit.user.application.edit.EditUserUseCase;
+import br.com.orbit.user.application.list.GetAllUsersUseCase;
 import br.com.orbit.user.application.list.GetUserUseCase;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -48,17 +52,23 @@ public class UserController {
     private final GetUserUseCase getUserUseCase;
     private final DeleteUserUseCase deleteUserUseCase;
     private final EditUserUseCase editUserUseCase;
+    private final EditUserRoleUseCase editUserRoleUseCase;
+    private final GetAllUsersUseCase getAllUsersUseCase;
 
     public UserController(
             CreateUserUseCase createUserUseCase,
             GetUserUseCase getUserUseCase,
             DeleteUserUseCase deleteUserUseCase,
-            EditUserUseCase editUserUseCase
+            EditUserUseCase editUserUseCase,
+            EditUserRoleUseCase editUserRoleUseCase,
+            GetAllUsersUseCase getAllUsersUseCase
     ) {
         this.createUserUseCase = createUserUseCase;
         this.getUserUseCase = getUserUseCase;
         this.deleteUserUseCase = deleteUserUseCase;
         this.editUserUseCase = editUserUseCase;
+        this.editUserRoleUseCase = editUserRoleUseCase;
+        this.getAllUsersUseCase = getAllUsersUseCase;
     }
 
     @PostMapping("/users")
@@ -73,6 +83,12 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
+    @GetMapping("/users")
+    public ResponseEntity<List<UserPresenter>> getAllUsers(Authentication authentication) {
+        List<UserPresenter> users = getAllUsersUseCase.execute(actorFrom(authentication));
+        return ResponseEntity.ok(users);
+    }
+
     @PutMapping("/users/{id}")
     public ResponseEntity<UserPresenter> updateUser(
             @PathVariable UUID id,
@@ -81,6 +97,16 @@ public class UserController {
     ) {
         UserPresenter updated = editUserUseCase.execute(request, id, actorFrom(authentication));
         return ResponseEntity.ok(updated);
+    }
+
+    @PutMapping("/users/{id}/role")
+    public ResponseEntity<MessageResponse> updateUserRole(
+            @PathVariable UUID id,
+            @Valid @RequestBody EditUserRoleRequest request,
+            Authentication authentication
+    ) {
+        editUserRoleUseCase.execute(request, id, actorFrom(authentication));
+        return ResponseEntity.ok(new MessageResponse("Nível de acesso do usuário atualizado com sucesso"));
     }
 
     @DeleteMapping("/users/{id}")
