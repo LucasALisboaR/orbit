@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { ThemeService } from '../../theme.service';
 import { AuthServiceStub, ThemeServiceStub } from '../testing/layout-testing';
@@ -13,6 +14,7 @@ describe('UserAccountMenu', () => {
     await TestBed.configureTestingModule({
       imports: [UserAccountMenu],
       providers: [
+        provideRouter([]),
         { provide: AuthService, useClass: AuthServiceStub },
         { provide: ThemeService, useClass: ThemeServiceStub },
       ],

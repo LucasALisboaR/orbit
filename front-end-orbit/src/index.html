@@ -9,14 +9,13 @@
   <script>
     (() => {
       try {
-        const savedTheme = localStorage.getItem('theme');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const theme = savedTheme === 'dark' || (savedTheme === null && prefersDark)
-          ? 'dark'
-          : 'light';
-
-        document.documentElement.classList.toggle('dark', theme === 'dark');
-        localStorage.setItem('theme', theme);
+        const raw = localStorage.getItem('orbit_user');
+        const saved = raw ? JSON.parse(raw).theme : null;
+        const theme = String(saved ?? '').toLowerCase();
+        const dark =
+          theme === 'dark' ||
+          (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.classList.toggle('dark', dark);
       } catch {
         document.documentElement.classList.toggle(
           'dark',

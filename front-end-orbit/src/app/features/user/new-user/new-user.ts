@@ -7,6 +7,8 @@ import {
   lucideLock,
   lucideUser,
   lucideArrowLeft,
+  lucideEye,
+  lucideEyeOff,
 } from '@ng-icons/lucide';
 import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { HlmSpinnerImports } from '@spartan-ng/helm/spinner';
@@ -20,7 +22,7 @@ import { UserService } from '../../../services/user/login.service';
 
 @Component({
   selector: 'app-new-user',
-  providers: [provideIcons({ lucideMail, lucideLock, lucideUser, lucideArrowLeft })],
+  providers: [provideIcons({ lucideMail, lucideLock, lucideUser, lucideArrowLeft, lucideEye, lucideEyeOff })],
   imports: [
     CommonModule,
     FormField,
@@ -44,6 +46,7 @@ export class NewUser {
   protected readonly submitText = signal('Criar conta');
   protected readonly goBackText = signal('Voltar para o login');
   protected readonly loading = signal(false);
+  protected readonly showPassword = signal(false);
 
   newUserModel = signal<NewUserData>({
     firstName: '',
@@ -92,5 +95,9 @@ export class NewUser {
       return backendMessage;
     }
     return 'Não foi possível criar a conta. Tente novamente.';
+  }
+
+  protected togglePasswordVisibility(): void {
+    this.showPassword.update((visible) => !visible);
   }
 }

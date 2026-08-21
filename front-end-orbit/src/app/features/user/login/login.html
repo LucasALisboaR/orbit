@@ -1,7 +1,6 @@
-<div class="p-4 flex min-h-full flex-col justify-center gap-4">
+<div class="p-4 flex min-h-svh flex-col justify-center gap-4">
     <div class="sm:mx-auto sm:w-full sm:max-w-sm flex flex-col gap-4">
-        <img src="/orbit.png" alt="Your Company" class="mx-auto h-10 w-auto" />
-        <h1 class="text-center text-2xl tracking-tight">Orbit</h1>
+        <img src="/assets/logos/logo-text.png" alt="Orbit" class="mx-auto h-24 w-auto" />
         <h2 class="text-center text-gray-500 tracking-tight">{{ loginText() }}</h2>
     </div>
 
@@ -30,10 +29,19 @@
                     <a routerLink="/forget-password" class="font-semibold text-primary cursor-pointer">{{forgetText()}}</a>
                 </div>
                 <hlm-input-group>
-                    <input hlmInputGroupInput [formField]="loginForm.password" type="password"
+                    <input hlmInputGroupInput [formField]="loginForm.password"
+                        [type]="showPassword() ? 'text' : 'password'"
                         [placeholder]="passwordPlaceholder()" />
                     <hlm-input-group-addon>
                         <ng-icon name="lucideLock" />
+                    </hlm-input-group-addon>
+                    <hlm-input-group-addon align="inline-end">
+                        <button hlmInputGroupButton type="button" size="icon-xs"
+                            (click)="togglePasswordVisibility()"
+                            [attr.aria-label]="showPassword() ? 'Ocultar senha' : 'Mostrar senha'"
+                            [attr.aria-pressed]="showPassword()">
+                            <ng-icon [name]="showPassword() ? 'lucideEyeOff' : 'lucideEye'" />
+                        </button>
                     </hlm-input-group-addon>
                 </hlm-input-group>
                 @if (loginForm.password().touched() && loginForm.password().invalid()) {

@@ -1,16 +1,18 @@
-package br.com.orbit.user.application;
+package br.com.orbit.user.application.impl;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.orbit.user.application.dto.CreateUserRequest;
 import br.com.orbit.user.application.dto.UserPresenter;
+import br.com.orbit.user.application.usecase.CreateUserUseCase;
 import br.com.orbit.user.domain.PasswordHasher;
 import br.com.orbit.user.domain.User;
 import br.com.orbit.user.domain.UserRepository;
 import br.com.orbit.user.domain.User.UserTheme;
 
 /**
+ * Como o sistema faz 
  * Camada: APPLICATION (caso de uso — implementação)
  *
  * Orquestra o fluxo de cadastro:
@@ -22,13 +24,15 @@ import br.com.orbit.user.domain.User.UserTheme;
  *
  * Não conhece HTTP nem detalhes do PostgreSQL.
  */
+
+// alterar o nome para UseCaseImpl
 @Service
-public class CreateUserService implements CreateUserUseCase {
+public class CreateUserUseCaseImpl implements CreateUserUseCase {
 
     private final UserRepository userRepository;
     private final PasswordHasher passwordHasher;
 
-    public CreateUserService(UserRepository userRepository, PasswordHasher passwordHasher) {
+    public CreateUserUseCaseImpl(UserRepository userRepository, PasswordHasher passwordHasher) {
         this.userRepository = userRepository;
         this.passwordHasher = passwordHasher;
     }
@@ -43,7 +47,7 @@ public class CreateUserService implements CreateUserUseCase {
         }
 
         String passwordHash = passwordHasher.hash(request.password());
-        User user = new User(
+        User user = User.create(
                 request.firstName().trim(),
                 request.lastName().trim(),
                 email,
@@ -51,7 +55,7 @@ public class CreateUserService implements CreateUserUseCase {
                 UserTheme.LIGHT
         );
 
-        User saved = userRepository.save(user);
+        User saved = userRepository.persist(user);
         return UserPresenter.from(saved);
     }
 }

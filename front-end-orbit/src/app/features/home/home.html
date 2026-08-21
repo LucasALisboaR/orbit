@@ -1,0 +1,234 @@
+<div class="flex flex-col gap-8">
+  <!-- Cabeçalho: retomada do dia -->
+  <header class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <div class="flex flex-col gap-1">
+      <p class="text-muted-foreground text-sm">{{ greeting() }}</p>
+      <h1 class="text-2xl tracking-tight sm:text-3xl">
+        @if (auth.user(); as user) {
+        Olá, {{ user.firstName }}
+        } @else {
+        Início
+        }
+      </h1>
+      <p class="text-muted-foreground max-w-xl text-sm">
+        {{ focusNote() }}
+        <span class="text-foreground/70"> · dados mock para esboço do dashboard</span>
+      </p>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      <span hlmBadge variant="secondary" class="gap-1">
+        <ng-icon name="lucideFlame" />
+        {{ study().streakDays }} dias de estudo
+      </span>
+      <span hlmBadge variant="outline" class="gap-1">
+        <ng-icon name="lucideListTodo" />
+        {{ openTasksCount() }} tarefas abertas
+      </span>
+    </div>
+  </header>
+
+  <!-- Snapshot financeiro -->
+  <section class="grid gap-3 sm:grid-cols-3">
+    <article hlmCard size="sm" class="bg-muted/30 ring-0">
+      <div hlmCardHeader>
+        <div class="text-muted-foreground flex items-center gap-2 text-xs font-medium uppercase tracking-wide">
+          <ng-icon name="lucideWallet" />
+          Saldo
+        </div>
+        <h2 hlmCardTitle class="text-xl">
+          {{ finance().balance | currency: finance().currency : 'symbol-narrow' : '1.2-2' : 'pt-BR' }}
+        </h2>
+      </div>
+    </article>
+    <article hlmCard size="sm" class="bg-muted/30 ring-0">
+      <div hlmCardHeader>
+        <div class="text-muted-foreground flex items-center gap-2 text-xs font-medium uppercase tracking-wide">
+          <ng-icon name="lucidePiggyBank" />
+          Receitas do mês
+        </div>
+        <h2 hlmCardTitle class="text-primary text-xl">
+          {{ finance().incomeMonth | currency: finance().currency : 'symbol-narrow' : '1.2-2' : 'pt-BR' }}
+        </h2>
+      </div>
+    </article>
+    <article hlmCard size="sm" class="bg-muted/30 ring-0">
+      <div hlmCardHeader>
+        <div class="text-muted-foreground flex items-center gap-2 text-xs font-medium uppercase tracking-wide">
+          Despesas do mês
+        </div>
+        <h2 hlmCardTitle class="text-xl">
+          {{ finance().expenseMonth | currency: finance().currency : 'symbol-narrow' : '1.2-2' : 'pt-BR' }}
+        </h2>
+      </div>
+    </article>
+  </section>
+
+  <div class="grid gap-6 lg:grid-cols-5">
+    <!-- Estudos (foco do produto) -->
+    <section hlmCard class="lg:col-span-3">
+      <div hlmCardHeader>
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <h2 hlmCardTitle class="flex items-center gap-2">
+              <ng-icon name="lucideBookOpen" class="text-primary" />
+              Estudos de hoje
+            </h2>
+            <p hlmCardDescription>
+              {{ study().currentTrack }} · {{ study().currentTopic }}
+            </p>
+          </div>
+          <span hlmBadge>{{ study().minutesToday }} min</span>
+        </div>
+      </div>
+      <div hlmCardContent class="flex flex-col gap-4">
+        <div class="flex flex-col gap-2">
+          <div class="flex justify-between text-xs">
+            <span class="text-muted-foreground">Progresso do tópico</span>
+            <span>{{ study().topicProgress }}%</span>
+          </div>
+          <div class="bg-muted h-2 overflow-hidden rounded-full">
+            <div
+              class="bg-primary h-full rounded-full transition-[width]"
+              [style.width.%]="study().topicProgress"
+            ></div>
+          </div>
+        </div>
+        <div class="flex flex-col gap-2">
+          <div class="flex justify-between text-xs">
+            <span class="text-muted-foreground">Meta do dia (parte da semana)</span>
+            <span>{{ studyDayPercent() }}%</span>
+          </div>
+          <div class="bg-muted h-2 overflow-hidden rounded-full">
+            <div
+              class="bg-secondary h-full rounded-full transition-[width]"
+              [style.width.%]="studyDayPercent()"
+            ></div>
+          </div>
+        </div>
+        <p class="text-muted-foreground flex items-start gap-2 text-sm">
+          <ng-icon name="lucideSparkles" class="text-secondary mt-0.5 shrink-0" />
+          Sequência atual: <strong class="text-foreground">{{ study().streakDays }} dias</strong>.
+          Manter o ritmo importa mais do que estudar horas demais de uma vez.
+        </p>
+      </div>
+    </section>
+
+    <!-- Hábitos -->
+    <section hlmCard class="lg:col-span-2">
+      <div hlmCardHeader>
+        <h2 hlmCardTitle class="flex items-center gap-2">
+          <ng-icon name="lucideFlame" class="text-secondary" />
+          Hábitos
+        </h2>
+        <p hlmCardDescription>
+          {{ habitsDoneCount() }}/{{ habits().length }} feitos hoje
+        </p>
+      </div>
+      <div hlmCardContent class="flex flex-col gap-2">
+        @for (habit of habits(); track habit.id) {
+        <button
+          type="button"
+          class="hover:bg-muted/60 flex w-full items-center gap-3 rounded-lg border px-3 py-2 text-start transition-colors"
+          (click)="toggleHabit(habit)"
+        >
+          <ng-icon
+            [name]="habit.doneToday ? 'lucideCheck' : 'lucideCircleDashed'"
+            [ngClass]="habit.doneToday ? 'text-primary' : 'text-muted-foreground'"
+          />
+          <span class="min-w-0 flex-1">
+            <span
+              class="block text-sm font-medium"
+              [class.line-through]="habit.doneToday"
+              [class.text-muted-foreground]="habit.doneToday"
+            >
+              {{ habit.name }}
+            </span>
+            <span class="text-muted-foreground text-xs">{{ habit.streakDays }} dias seguidos</span>
+          </span>
+        </button>
+        }
+      </div>
+    </section>
+  </div>
+
+  <div class="grid gap-6 lg:grid-cols-2">
+    <!-- Tarefas -->
+    <section hlmCard>
+      <div hlmCardHeader>
+        <h2 hlmCardTitle class="flex items-center gap-2">
+          <ng-icon name="lucideListTodo" />
+          Próximas tarefas
+        </h2>
+        <p hlmCardDescription>Prioridades e prazos do dia a dia</p>
+      </div>
+      <div hlmCardContent class="flex flex-col gap-2">
+        @for (task of tasks(); track task.id) {
+        <button
+          type="button"
+          class="hover:bg-muted/60 flex w-full items-start gap-3 rounded-lg border px-3 py-2.5 text-start transition-colors"
+          (click)="toggleTask(task)"
+        >
+          <ng-icon
+            class="mt-0.5"
+            [name]="task.done ? 'lucideCheck' : 'lucideCircleDashed'"
+            [ngClass]="task.done ? 'text-primary' : 'text-muted-foreground'"
+          />
+          <span class="min-w-0 flex-1">
+            <span
+              class="block text-sm font-medium"
+              [class.line-through]="task.done"
+              [class.text-muted-foreground]="task.done"
+            >
+              {{ task.title }}
+            </span>
+            <span class="text-muted-foreground mt-1 flex flex-wrap items-center gap-2 text-xs">
+              <span>{{ task.dueLabel }}</span>
+              <span>· {{ task.project }}</span>
+              <span hlmBadge [variant]="priorityVariant(task.priority)" class="capitalize">
+                {{ task.priority }}
+              </span>
+            </span>
+          </span>
+        </button>
+        }
+      </div>
+    </section>
+
+    <!-- Metas -->
+    <section hlmCard>
+      <div hlmCardHeader>
+        <h2 hlmCardTitle class="flex items-center gap-2">
+          <ng-icon name="lucideTarget" />
+          Metas em andamento
+        </h2>
+        <p hlmCardDescription>Estudo, dinheiro e vida pessoal no mesmo lugar</p>
+      </div>
+      <div hlmCardContent class="flex flex-col gap-4">
+        @for (goal of goals(); track goal.id) {
+        <div class="flex flex-col gap-2">
+          <div class="flex items-start justify-between gap-2">
+            <div class="min-w-0">
+              <p class="text-sm font-medium">{{ goal.title }}</p>
+              <p class="text-muted-foreground text-xs">
+                {{ domainLabel(goal.domain) }} · {{ goal.deadlineLabel }}
+              </p>
+            </div>
+            <span class="text-sm tabular-nums">{{ goal.progress }}%</span>
+          </div>
+          <div class="bg-muted h-2 overflow-hidden rounded-full">
+            <div
+              class="h-full rounded-full bg-linear-to-r from-primary to-secondary transition-[width]"
+              [style.width.%]="goal.progress"
+            ></div>
+          </div>
+        </div>
+        }
+      </div>
+    </section>
+  </div>
+
+  <p class="text-muted-foreground text-center text-xs">
+    Esboço da visão geral do Orbit — finanças, estudos, tarefas, hábitos e metas.
+    Integração com API virá por domínio (V2+).
+  </p>
+</div>
