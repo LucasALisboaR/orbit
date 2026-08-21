@@ -4,9 +4,22 @@ export enum UserTheme {
 }
 
 export enum UserRole {
-    ADMIN = 'admin',
-    USER = 'user',
+    ADMIN = 'ADMIN',
+    BASIC = 'BASIC',
 }
+
+export function isAdminRole(role: string | UserRole | null | undefined): boolean {
+    return String(role ?? '').toUpperCase() === UserRole.ADMIN;
+}
+
+export function fromApiTheme(theme: unknown): UserTheme {
+    return String(theme ?? '').toLowerCase() === 'dark' ? UserTheme.DARK : UserTheme.LIGHT;
+}
+
+export function toApiTheme(theme: string): 'LIGHT' | 'DARK' {
+    return String(theme).toUpperCase() === 'DARK' ? 'DARK' : 'LIGHT';
+}
+
 export interface LoginData {
     email: string;
     password: string;
@@ -23,6 +36,14 @@ export interface NewUserData {
     password: string;
     role?: UserRole;
     theme?: UserTheme;
+}
+
+export interface UpdateUserData {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password?: string;
+    theme?: 'LIGHT' | 'DARK';
 }
 
 export interface User {

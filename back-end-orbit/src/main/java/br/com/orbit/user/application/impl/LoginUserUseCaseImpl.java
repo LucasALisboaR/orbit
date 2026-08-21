@@ -1,10 +1,11 @@
-package br.com.orbit.user.application;
+package br.com.orbit.user.application.impl;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.orbit.user.application.dto.LoginRequest;
 import br.com.orbit.user.application.dto.UserPresenter;
+import br.com.orbit.user.application.usecase.LoginUserUseCase;
 import br.com.orbit.user.domain.PasswordHasher;
 import br.com.orbit.user.domain.User;
 import br.com.orbit.user.domain.UserRepository;
@@ -19,12 +20,12 @@ import br.com.orbit.user.domain.UserRepository;
  * 4) retorna UserPresenter (sem passwordHash)
  */
 @Service
-public class LoginUserService implements LoginUserUseCase {
+public class LoginUserUseCaseImpl implements LoginUserUseCase {
 
     private final UserRepository userRepository;
     private final PasswordHasher passwordHasher;
 
-    public LoginUserService(UserRepository userRepository, PasswordHasher passwordHasher) {
+    public LoginUserUseCaseImpl(UserRepository userRepository, PasswordHasher passwordHasher) {
         this.userRepository = userRepository;
         this.passwordHasher = passwordHasher;
     }

@@ -1,5 +1,6 @@
 package br.com.orbit.user.infrastructure.persistence;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -24,13 +25,18 @@ public class UserRepositoryAdapter implements UserRepository {
     }
 
     @Override
-    public User save(User user) {
+    public User persist(User user) {
         return springDataUserRepository.save(user);
     }
 
     @Override
     public Optional<User> findById(UUID id) {
         return springDataUserRepository.findById(id);
+    }
+
+    @Override
+    public List<User> findAll() {
+        return springDataUserRepository.findAll();
     }
 
     @Override

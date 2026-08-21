@@ -1,10 +1,12 @@
 import { Component, computed, inject, input } from '@angular/core';
+import { Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
   lucideChevronsUpDown,
   lucideLogOut,
   lucideMoon,
   lucideSun,
+  lucideUserRoundPen,
 } from '@ng-icons/lucide';
 import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
 import { HlmSidebarImports } from '@spartan-ng/helm/sidebar';
@@ -19,6 +21,7 @@ import { ThemeService } from '../../theme.service';
       lucideLogOut,
       lucideMoon,
       lucideSun,
+      lucideUserRoundPen,
     }),
   ],
   imports: [NgIcon, HlmDropdownMenuImports, HlmSidebarImports],
@@ -31,6 +34,7 @@ import { ThemeService } from '../../theme.service';
 export class UserAccountMenu {
   private readonly auth = inject(AuthService);
   private readonly themeService = inject(ThemeService);
+  private readonly router = inject(Router);
 
   readonly variant = input<'sidebar' | 'bottom'>('sidebar');
   readonly side = input<'top' | 'bottom' | 'left' | 'right'>('top');
@@ -47,6 +51,10 @@ export class UserAccountMenu {
 
   protected toggleTheme(): void {
     this.themeService.toggleTheme();
+  }
+
+  protected goToEditProfile(): void {
+    void this.router.navigate(['/user/edit']);
   }
 
   protected logout(): void {

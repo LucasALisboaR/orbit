@@ -41,6 +41,32 @@
             }
           },
           "configurations": {
+            "prd": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                }
+              ],
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "core/env/environment.ts",
+                  "with": "core/env/environment.prd.ts"
+                }
+              ]
+            },
+            "local": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            },
             "production": {
               "budgets": [
                 {
@@ -54,7 +80,13 @@
                   "maximumError": "8kB"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "core/env/environment.ts",
+                  "with": "core/env/environment.prd.ts"
+                }
+              ]
             },
             "development": {
               "optimization": false,
@@ -62,11 +94,17 @@
               "sourceMap": true
             }
           },
-          "defaultConfiguration": "production"
+          "defaultConfiguration": "prd"
         },
         "serve": {
           "builder": "@angular/build:dev-server",
           "configurations": {
+            "local": {
+              "buildTarget": "front-end-orbit:build:local"
+            },
+            "prd": {
+              "buildTarget": "front-end-orbit:build:prd"
+            },
             "production": {
               "buildTarget": "front-end-orbit:build:production"
             },
@@ -74,7 +112,7 @@
               "buildTarget": "front-end-orbit:build:development"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "local"
         },
         "test": {
           "builder": "@angular/build:unit-test"
