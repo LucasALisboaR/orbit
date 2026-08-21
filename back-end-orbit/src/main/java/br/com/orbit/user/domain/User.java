@@ -3,9 +3,6 @@ package br.com.orbit.user.domain;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -13,6 +10,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -26,9 +25,11 @@ import lombok.NoArgsConstructor;
  * independentemente de HTTP, banco ou framework.
  *
  * Em Clean Architecture / DDD:
- * - Domain NÃO deve depender de Controller, Service de aplicação ou detalhes de infra.
+ * - Domain NÃO deve depender de Controller, Service de aplicação ou detalhes de
+ * infra.
  * - Anotações JPA aqui são um atalho pragmático (entity rica + persistência).
- *   Em DDD "puro", a entity ficaria sem JPA e haveria um mapper na infrastructure.
+ * Em DDD "puro", a entity ficaria sem JPA e haveria um mapper na
+ * infrastructure.
  */
 @Entity
 @Table(name = "users")
@@ -73,17 +74,17 @@ public class User {
     @Column(nullable = false)
     private boolean isActive;
 
-    @CreationTimestamp
     @Column(name = "created_at", updatable = false, nullable = false)
     private OffsetDateTime createdAt;
 
-    @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     private OffsetDateTime updatedAt;
 
     /**
-     * Factory/construtor de domínio: único caminho "oficial" para criar um User válido.
-     * passwordHash já deve vir criptografado (BCrypt) pela camada de application/infrastructure.
+     * Factory/construtor de domínio: único caminho "oficial" para criar um User
+     * válido.
+     * passwordHash já deve vir criptografado (BCrypt) pela camada de
+     * application/infrastructure.
      */
     private User(String firstName, String lastName, String email, String passwordHash, UserTheme theme) {
         this.firstName = firstName;
@@ -110,6 +111,18 @@ public class User {
         this.passwordHash = passwordHash;
         setTheme(theme);
         validate();
+    }
+
+    @PrePersist
+    void onPersist() {
+        OffsetDateTime now = OffsetDateTime.now();
+        this.createdAt = now;
+        this.updatedAt = now;
+    }
+
+    @PreUpdate
+    void onUpdate() {
+        this.updatedAt = OffsetDateTime.now();
     }
 
     /** Regra de negócio: trocar senha = trocar o hash, nunca guardar texto puro. */
