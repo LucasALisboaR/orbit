@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://3.141.15.66:8080/api',
+  apiUrl: 'https://3-141-15-66.sslip.io/api',
   frontendUrl: 'http://3.141.15.66',
 };
