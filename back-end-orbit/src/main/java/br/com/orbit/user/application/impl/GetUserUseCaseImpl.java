@@ -5,7 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.orbit.user.application.dto.GetUserRequest;
 import br.com.orbit.user.application.dto.UserPresenter;
-import br.com.orbit.user.application.shared.UserAccessPolicy;
+import br.com.orbit.shared.application.AccessPolicy;
 import br.com.orbit.user.application.usecase.GetUserUseCase;
 import br.com.orbit.user.domain.User;
 import br.com.orbit.user.domain.UserRepository;
@@ -27,7 +27,7 @@ public class GetUserUseCaseImpl implements GetUserUseCase {
     @Override
     @Transactional(readOnly = true)
     public UserPresenter execute(GetUserRequest request) {
-        UserAccessPolicy.requireSelfOrAdmin(
+        AccessPolicy.requireSelfOrAdmin(
                 request.actor().id(),
                 request.actor().admin(),
                 request.id(),

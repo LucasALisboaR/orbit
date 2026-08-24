@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.orbit.finance.categories.application.dto.CategoriesPresenter;
 import br.com.orbit.finance.categories.application.dto.CreateCategoriesByUserRequest;
 import br.com.orbit.finance.categories.application.usecase.CreateCategoriesByUserUseCase;
-import br.com.orbit.finance.shared.api.AuthenticatedUserSupport;
+import br.com.orbit.shared.api.AuthenticatedUserSupport;
 import jakarta.validation.Valid;
 
 @RestController

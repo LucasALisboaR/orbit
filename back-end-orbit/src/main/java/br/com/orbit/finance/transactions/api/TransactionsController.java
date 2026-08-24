@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.orbit.finance.shared.api.AuthenticatedUserSupport;
+import br.com.orbit.shared.api.AuthenticatedUserSupport;
 import br.com.orbit.finance.transactions.application.dto.CreateTransactionsRequest;
 import br.com.orbit.finance.transactions.application.dto.TransactionsPresenter;
 import br.com.orbit.finance.transactions.application.usecase.CreateTransactionUseCase;

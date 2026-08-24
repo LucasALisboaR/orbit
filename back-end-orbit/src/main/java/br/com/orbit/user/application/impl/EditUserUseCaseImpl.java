@@ -5,10 +5,10 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.orbit.user.application.dto.ActorRequest;
+import br.com.orbit.shared.application.AccessPolicy;
+import br.com.orbit.shared.application.dto.ActorRequest;
 import br.com.orbit.user.application.dto.EditUserRequest;
 import br.com.orbit.user.application.dto.UserPresenter;
-import br.com.orbit.user.application.shared.UserAccessPolicy;
 import br.com.orbit.user.application.usecase.EditUserUseCase;
 import br.com.orbit.user.domain.PasswordHasher;
 import br.com.orbit.user.domain.User;
@@ -43,7 +43,7 @@ public class EditUserUseCaseImpl implements EditUserUseCase {
     @Transactional
     public UserPresenter execute(EditUserRequest request, UUID id, ActorRequest actor) {
 
-        UserAccessPolicy.requireSelfOrAdmin(
+        AccessPolicy.requireSelfOrAdmin(
                 actor.id(),
                 actor.admin(),
                 id,

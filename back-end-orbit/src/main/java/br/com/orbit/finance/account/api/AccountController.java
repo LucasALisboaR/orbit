@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.orbit.finance.account.application.dto.AccountPresenter;
 import br.com.orbit.finance.account.application.dto.CreateAccountRequest;
 import br.com.orbit.finance.account.application.usecase.CreateAccountUseCase;
-import br.com.orbit.finance.shared.api.AuthenticatedUserSupport;
+import br.com.orbit.shared.api.AuthenticatedUserSupport;
 import jakarta.validation.Valid;
 
 @RestController

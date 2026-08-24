@@ -6,7 +6,6 @@ import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,13 +14,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.orbit.user.application.dto.ActorRequest;
+import br.com.orbit.shared.api.AuthenticatedUserSupport;
+import br.com.orbit.shared.application.dto.MessageResponse;
 import br.com.orbit.user.application.dto.CreateUserRequest;
 import br.com.orbit.user.application.dto.DeleteUserRequest;
 import br.com.orbit.user.application.dto.EditUserRequest;
 import br.com.orbit.user.application.dto.EditUserRoleRequest;
 import br.com.orbit.user.application.dto.GetUserRequest;
-import br.com.orbit.user.application.dto.MessageResponse;
 import br.com.orbit.user.application.dto.UserPresenter;
 import br.com.orbit.user.application.usecase.CreateUserUseCase;
 import br.com.orbit.user.application.usecase.DeleteUserUseCase;
@@ -79,13 +78,13 @@ public class UserController {
 
     @GetMapping("/users/{id}")
     public ResponseEntity<UserPresenter> getUser(@PathVariable UUID id, Authentication authentication) {
-        UserPresenter user = getUserUseCase.execute(new GetUserRequest(id, actorFrom(authentication)));
+        UserPresenter user = getUserUseCase.execute(new GetUserRequest(id, AuthenticatedUserSupport.actorFrom(authentication)));
         return ResponseEntity.ok(user);
     }
 
     @GetMapping("/users")
     public ResponseEntity<List<UserPresenter>> getAllUsers(Authentication authentication) {
-        List<UserPresenter> users = getAllUsersUseCase.execute(actorFrom(authentication));
+        List<UserPresenter> users = getAllUsersUseCase.execute(AuthenticatedUserSupport.actorFrom(authentication));
         return ResponseEntity.ok(users);
     }
 
@@ -95,7 +94,7 @@ public class UserController {
             @Valid @RequestBody EditUserRequest request,
             Authentication authentication
     ) {
-        UserPresenter updated = editUserUseCase.execute(request, id, actorFrom(authentication));
+        UserPresenter updated = editUserUseCase.execute(request, id, AuthenticatedUserSupport.actorFrom(authentication));
         return ResponseEntity.ok(updated);
     }
 
@@ -105,21 +104,13 @@ public class UserController {
             @Valid @RequestBody EditUserRoleRequest request,
             Authentication authentication
     ) {
-        editUserRoleUseCase.execute(request, id, actorFrom(authentication));
+        editUserRoleUseCase.execute(request, id, AuthenticatedUserSupport.actorFrom(authentication));
         return ResponseEntity.ok(new MessageResponse("Nível de acesso do usuário atualizado com sucesso"));
     }
 
     @DeleteMapping("/users/{id}")
     public ResponseEntity<MessageResponse> deleteUser(@PathVariable UUID id, Authentication authentication) {
-        deleteUserUseCase.execute(new DeleteUserRequest(id, actorFrom(authentication)));
+        deleteUserUseCase.execute(new DeleteUserRequest(id, AuthenticatedUserSupport.actorFrom(authentication)));
         return ResponseEntity.ok(new MessageResponse("Usuário deletado com sucesso"));
-    }
-
-    private ActorRequest actorFrom(Authentication authentication) {
-        UUID actorId = UUID.fromString(authentication.getName());
-        boolean admin = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .anyMatch("ROLE_ADMIN"::equals);
-        return new ActorRequest(actorId, admin);
     }
 }

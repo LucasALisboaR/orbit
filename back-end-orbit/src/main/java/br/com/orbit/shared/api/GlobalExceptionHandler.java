@@ -1,4 +1,4 @@
-package br.com.orbit.user.api;
+package br.com.orbit.shared.api;
 
 import java.time.OffsetDateTime;
 import java.util.HashMap;
@@ -11,19 +11,13 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import br.com.orbit.user.application.shared.ForbiddenException;
+import br.com.orbit.shared.application.ForbiddenException;
 
 /**
- * Camada: API (tratamento de erros HTTP)
- *
- * Converte exceções de domínio/validação em respostas JSON amigáveis.
- * Mantém controllers limpos (Clean Code: um motivo para mudar).
+ * Tratamento de erros HTTP compartilhado entre módulos (user, auth, finance).
  */
-@RestControllerAdvice(basePackages = {
-        "br.com.orbit.user.api",
-        "br.com.orbit.auth.api"
-})
-public class UserExceptionHandler {
+@RestControllerAdvice(basePackages = "br.com.orbit")
+public class GlobalExceptionHandler {
 
     @ExceptionHandler(ForbiddenException.class)
     public ResponseEntity<Map<String, Object>> handleForbidden(ForbiddenException ex) {

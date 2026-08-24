@@ -1,8 +1,11 @@
-package br.com.orbit.finance.shared.api;
+package br.com.orbit.shared.api;
 
 import java.util.UUID;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+
+import br.com.orbit.shared.application.dto.ActorRequest;
 
 /**
  * Extrai o usuário autenticado do JWT (Spring Security).
@@ -18,5 +21,13 @@ public final class AuthenticatedUserSupport {
             throw new IllegalArgumentException("Usuário não autenticado");
         }
         return UUID.fromString(authentication.getName());
+    }
+
+    public static ActorRequest actorFrom(Authentication authentication) {
+        UUID actorId = userIdFrom(authentication);
+        boolean admin = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch("ROLE_ADMIN"::equals);
+        return new ActorRequest(actorId, admin);
     }
 }

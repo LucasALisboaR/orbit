@@ -1,4 +1,4 @@
-package br.com.orbit.user.application.dto;
+package br.com.orbit.shared.application.dto;
 
 import java.util.UUID;
 

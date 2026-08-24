@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.orbit.user.application.dto.DeleteUserRequest;
-import br.com.orbit.user.application.shared.UserAccessPolicy;
+import br.com.orbit.shared.application.AccessPolicy;
 import br.com.orbit.user.application.usecase.DeleteUserUseCase;
 import br.com.orbit.user.domain.User;
 import br.com.orbit.user.domain.UserRepository;
@@ -21,7 +21,7 @@ public class DeleteUserUseCaseImpl implements DeleteUserUseCase {
     @Override
     @Transactional
     public void execute(DeleteUserRequest request) {
-        UserAccessPolicy.requireSelfOrAdmin(
+        AccessPolicy.requireSelfOrAdmin(
                 request.actor().id(),
                 request.actor().admin(),
                 request.id(),

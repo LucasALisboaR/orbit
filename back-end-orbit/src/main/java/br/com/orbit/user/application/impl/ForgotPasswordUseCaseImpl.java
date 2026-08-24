@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.orbit.user.application.dto.ForgotPasswordRequest;
-import br.com.orbit.user.application.dto.MessageResponse;
+import br.com.orbit.shared.application.dto.MessageResponse;
 import br.com.orbit.user.application.usecase.ForgotPasswordUseCase;
 import br.com.orbit.user.domain.UserRepository;
 
