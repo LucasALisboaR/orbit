@@ -1,5 +1,6 @@
 package br.com.orbit.finance.account.infrastructure.persistence;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -13,23 +14,22 @@ public class AccountRepositoryAdapter implements AccountRepository {
 
     private final SpringDataAccountRepository springDataAccountRepository;
 
-    public AccountRepositoryAdapter(SpringDataAccountRepository springDataAccountRepository){
+    public AccountRepositoryAdapter(SpringDataAccountRepository springDataAccountRepository) {
         this.springDataAccountRepository = springDataAccountRepository;
     }
 
     @Override
-    public Account persist(Account account){
+    public Account persist(Account account) {
         return springDataAccountRepository.save(account);
     }
 
     @Override
-    public Optional<Account> findById(UUID id){
+    public Optional<Account> findById(UUID id) {
         return springDataAccountRepository.findById(id);
     }
 
     @Override
-    public Optional<Account> findByUserId(UUID id){
-        return springDataAccountRepository.findById(id);
+    public List<Account> findByUserId(UUID userId) {
+        return springDataAccountRepository.findAllByUserId(userId);
     }
-    
 }

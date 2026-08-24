@@ -9,7 +9,6 @@ import br.com.orbit.finance.account.domain.Account.AccountType;
 
 public record AccountPresenter(
     UUID id,
-    UUID userId,
     String name,
     AccountType type,
     BigDecimal balance,
@@ -21,7 +20,6 @@ public record AccountPresenter(
     public static AccountPresenter from(Account account) {
         return new AccountPresenter(
             account.getId(),
-            account.getUserId(),
             account.getName(),
             account.getType(),
             account.getBalance(),
