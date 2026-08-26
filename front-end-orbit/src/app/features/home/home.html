@@ -28,7 +28,15 @@
   </header>
 
   <!-- Snapshot financeiro -->
-  <section class="grid gap-3 sm:grid-cols-3">
+  <section class="flex flex-col gap-3">
+    <div class="flex flex-wrap items-center justify-between gap-2">
+      <h2 class="text-sm font-medium">Finanças</h2>
+      <button type="button" hlmBtn size="sm" class="gap-1.5" (click)="openQuickTransaction()">
+        <ng-icon name="lucidePlus" />
+        Nova transação
+      </button>
+    </div>
+    <div class="grid gap-3 sm:grid-cols-3">
     <article hlmCard size="sm" class="bg-muted/30 ring-0">
       <div hlmCardHeader>
         <div class="text-muted-foreground flex items-center gap-2 text-xs font-medium uppercase tracking-wide">
@@ -61,6 +69,7 @@
         </h2>
       </div>
     </article>
+    </div>
   </section>
 
   <div class="grid gap-6 lg:grid-cols-5">
@@ -232,3 +241,5 @@
     Integração com API virá por domínio (V2+).
   </p>
 </div>
+
+<app-create-transaction-dialog />

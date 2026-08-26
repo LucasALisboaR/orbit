@@ -1,7 +1,7 @@
 package br.com.orbit.user.application.usecase;
 
 import br.com.orbit.user.application.dto.ForgotPasswordRequest;
-import br.com.orbit.user.application.dto.MessageResponse;
+import br.com.orbit.shared.application.dto.MessageResponse;
 
 /**
  * Camada: APPLICATION (caso de uso — porta de entrada)

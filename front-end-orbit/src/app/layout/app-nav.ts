@@ -12,4 +12,9 @@ export const APP_NAV_ITEMS = signal<readonly AppNavItem[]>([
     url: '/home',
     icon: 'lucideHouse',
   },
+  {
+    title: 'Finanças',
+    url: '/finance',
+    icon: 'lucideWallet',
+  },
 ]);

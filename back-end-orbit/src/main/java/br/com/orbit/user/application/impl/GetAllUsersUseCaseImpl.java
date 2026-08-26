@@ -5,9 +5,9 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import br.com.orbit.user.application.dto.ActorRequest;
+import br.com.orbit.shared.application.AccessPolicy;
+import br.com.orbit.shared.application.dto.ActorRequest;
 import br.com.orbit.user.application.dto.UserPresenter;
-import br.com.orbit.user.application.shared.UserAccessPolicy;
 import br.com.orbit.user.application.usecase.GetAllUsersUseCase;
 import br.com.orbit.user.domain.User;
 import br.com.orbit.user.domain.UserRepository;
@@ -22,7 +22,7 @@ public class GetAllUsersUseCaseImpl implements GetAllUsersUseCase {
 
     @Override
     public List<UserPresenter> execute(ActorRequest actor) {
-        UserAccessPolicy.requireAdmin(
+        AccessPolicy.requireAdmin(
                 actor.id(),
                 actor.admin(),
                 "Você não tem permissão para visualizar todos os usuários"

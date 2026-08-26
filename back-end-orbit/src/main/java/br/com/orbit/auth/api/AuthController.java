@@ -10,7 +10,7 @@ import br.com.orbit.auth.application.dto.AuthResponse;
 import br.com.orbit.auth.domain.TokenProvider;
 import br.com.orbit.user.application.dto.ForgotPasswordRequest;
 import br.com.orbit.user.application.dto.LoginRequest;
-import br.com.orbit.user.application.dto.MessageResponse;
+import br.com.orbit.shared.application.dto.MessageResponse;
 import br.com.orbit.user.application.dto.UserPresenter;
 import br.com.orbit.user.application.usecase.ForgotPasswordUseCase;
 import br.com.orbit.user.application.usecase.LoginUserUseCase;

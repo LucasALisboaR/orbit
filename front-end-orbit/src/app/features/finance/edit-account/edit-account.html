@@ -1,0 +1,64 @@
+<div class="flex flex-col gap-8">
+  <div class="flex flex-col gap-1">
+    <h1 class="text-2xl tracking-tight">Editar conta</h1>
+    <p class="text-muted-foreground text-sm">Altere o nome e o tipo da conta financeira.</p>
+  </div>
+
+  @if (loading()) {
+  <div class="text-muted-foreground flex items-center gap-2 text-sm">
+    <hlm-spinner />
+    Carregando conta...
+  </div>
+  } @else {
+  <form class="grid max-w-xl gap-4" (submit)="$event.preventDefault(); onSubmit()">
+    <div>
+      <hlm-input-group>
+        <input
+          hlmInputGroupInput
+          [formField]="accountForm.name"
+          type="text"
+          placeholder="Ex.: Nubank, Itaú"
+        />
+        <hlm-input-group-addon>
+          <ng-icon name="lucideWallet" />
+        </hlm-input-group-addon>
+      </hlm-input-group>
+      @if (accountForm.name().touched() && accountForm.name().invalid()) {
+      <ul class="text-destructive mt-1 ml-2 text-end text-sm">
+        @for (error of accountForm.name().errors(); track error) {
+        <li>{{ error.message }}</li>
+        }
+      </ul>
+      }
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label class="text-sm font-medium" for="account-type">Tipo</label>
+      <select
+        id="account-type"
+        class="border-input bg-background ring-offset-background focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+        [formField]="accountForm.type"
+      >
+        @for (type of accountTypes; track type) {
+        <option [value]="type">{{ accountTypeLabels[type] }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="flex flex-wrap gap-3">
+      <button type="submit" hlmBtn [disabled]="saving() || !accountForm().valid()" class="gap-2">
+        @if (saving()) {
+        <hlm-spinner data-icon="inline-start" />
+        }
+        Salvar alterações
+      </button>
+      <a routerLink="/finance" hlmBtn variant="outline">Cancelar</a>
+    </div>
+  </form>
+  }
+
+  <a routerLink="/finance" class="text-primary inline-flex items-center gap-1 text-sm font-medium hover:opacity-80">
+    <ng-icon name="lucideArrowLeft" />
+    Voltar para finanças
+  </a>
+</div>

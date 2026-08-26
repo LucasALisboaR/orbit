@@ -1,0 +1,57 @@
+<div class="flex flex-col gap-8">
+  <div class="flex flex-col gap-1">
+    <h1 class="text-2xl tracking-tight">Nova categoria</h1>
+    <p class="text-muted-foreground text-sm">Crie uma categoria personalizada para classificar lançamentos.</p>
+  </div>
+
+  <form class="grid max-w-xl gap-4" (submit)="$event.preventDefault(); onSubmit()">
+    <div>
+      <hlm-input-group>
+        <input
+          hlmInputGroupInput
+          [formField]="categoryForm.name"
+          type="text"
+          placeholder="Ex.: Alimentação, Salário"
+        />
+        <hlm-input-group-addon>
+          <ng-icon name="lucideFolderPlus" />
+        </hlm-input-group-addon>
+      </hlm-input-group>
+      @if (categoryForm.name().touched() && categoryForm.name().invalid()) {
+      <ul class="text-destructive mt-1 ml-2 text-end text-sm">
+        @for (error of categoryForm.name().errors(); track error) {
+        <li>{{ error.message }}</li>
+        }
+      </ul>
+      }
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label class="text-sm font-medium" for="category-type">Tipo</label>
+      <select
+        id="category-type"
+        class="border-input bg-background ring-offset-background focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+        [formField]="categoryForm.type"
+      >
+        @for (type of categoryTypes; track type) {
+        <option [value]="type">{{ categoryTypeLabels[type] }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="flex flex-wrap gap-3">
+      <button type="submit" hlmBtn [disabled]="loading() || !categoryForm().valid()" class="gap-2">
+        @if (loading()) {
+        <hlm-spinner data-icon="inline-start" />
+        }
+        Criar categoria
+      </button>
+      <a routerLink="/finance" hlmBtn variant="outline">Cancelar</a>
+    </div>
+  </form>
+
+  <a routerLink="/finance" class="text-primary inline-flex items-center gap-1 text-sm font-medium hover:opacity-80">
+    <ng-icon name="lucideArrowLeft" />
+    Voltar para finanças
+  </a>
+</div>

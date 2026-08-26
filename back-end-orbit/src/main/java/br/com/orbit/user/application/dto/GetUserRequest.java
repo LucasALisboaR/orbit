@@ -4,6 +4,8 @@ import java.util.UUID;
 
 import jakarta.validation.constraints.NotNull;
 
+import br.com.orbit.shared.application.dto.ActorRequest;
+
 /**
  * Camada: APPLICATION (DTO de entrada)
  *

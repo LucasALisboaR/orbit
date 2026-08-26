@@ -4,10 +4,10 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
-import br.com.orbit.user.application.dto.ActorRequest;
+import br.com.orbit.shared.application.AccessPolicy;
+import br.com.orbit.shared.application.dto.ActorRequest;
 import br.com.orbit.user.application.dto.EditUserRoleRequest;
 import br.com.orbit.user.application.dto.UserPresenter;
-import br.com.orbit.user.application.shared.UserAccessPolicy;
 import br.com.orbit.user.application.usecase.EditUserRoleUseCase;
 import br.com.orbit.user.domain.User;
 import br.com.orbit.user.domain.UserRepository;
@@ -24,7 +24,7 @@ public class EditUserRoleUseCaseImpl implements EditUserRoleUseCase {
     @Override
     public UserPresenter execute(EditUserRoleRequest request, UUID id, ActorRequest actor) {
 
-        UserAccessPolicy.requireAdmin(
+        AccessPolicy.requireAdmin(
                 actor.id(),
                 actor.admin(),
                 "Você não tem permissão para alterar o nível de acesso deste usuário");
