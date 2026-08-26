@@ -1,0 +1,136 @@
+<div class="flex flex-col gap-6">
+  <!-- Cabeçalho + ações -->
+  <header class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div class="flex flex-col gap-1">
+      <h1 class="text-2xl tracking-tight">Finanças</h1>
+      <p class="text-muted-foreground text-sm">Suas contas e saldos em um só lugar.</p>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      <button type="button" hlmBtn variant="outline" class="gap-2" (click)="openAccountDialog()">
+        <ng-icon name="lucidePlus" />
+        Nova conta
+      </button>
+      <button type="button" hlmBtn class="gap-2" (click)="openTransactionDialog()">
+        <ng-icon name="lucideReceipt" />
+        Nova transação
+      </button>
+    </div>
+  </header>
+
+  <!-- Resumo -->
+  <article hlmCard class="bg-muted/30 ring-0">
+    <div hlmCardHeader class="pb-2">
+      <p class="text-muted-foreground flex items-center gap-2 text-xs font-medium uppercase tracking-wide">
+        <ng-icon name="lucideWallet" />
+        Saldo total
+      </p>
+      <h2 hlmCardTitle class="text-2xl tabular-nums">
+        @if (loadingAccounts()) {
+        —
+        } @else {
+        {{ totalBalance() | currency: 'BRL' : 'symbol-narrow' : '1.2-2' : 'pt-BR' }}
+        }
+      </h2>
+      <p hlmCardDescription>{{ accounts().length }} conta(s) ativa(s)</p>
+    </div>
+  </article>
+
+  <!-- Lista de contas -->
+  <section class="flex flex-col gap-3">
+    <h2 class="text-lg font-medium">Suas contas</h2>
+
+    @if (loadingAccounts()) {
+    <div class="text-muted-foreground flex items-center gap-2 py-8 text-sm">
+      <hlm-spinner />
+      Carregando contas...
+    </div>
+    } @else if (accounts().length === 0) {
+    <div hlmCard class="border-dashed ring-0">
+      <div hlmCardContent class="flex flex-col items-center gap-4 py-10 text-center">
+        <ng-icon name="lucideWallet" class="text-muted-foreground text-3xl" />
+        <div>
+          <p class="font-medium">Nenhuma conta cadastrada</p>
+          <p class="text-muted-foreground text-sm">Crie sua primeira conta para começar.</p>
+        </div>
+        <button type="button" hlmBtn class="gap-2" (click)="openAccountDialog()">
+          <ng-icon name="lucidePlus" />
+          Criar conta
+        </button>
+      </div>
+    </div>
+    } @else {
+    <div class="grid gap-3 sm:grid-cols-2">
+      @for (account of accounts(); track account.id) {
+      <article hlmCard class="transition-shadow hover:shadow-sm">
+        <div hlmCardHeader class="pb-2">
+          <div class="flex items-start justify-between gap-2">
+            <div class="min-w-0">
+              <h3 hlmCardTitle class="truncate text-base">{{ account.name }}</h3>
+              <p hlmCardDescription>{{ accountTypeLabels[account.type] }}</p>
+            </div>
+            <span hlmBadge variant="secondary" class="shrink-0 tabular-nums">
+              {{ account.balance | currency: 'BRL' : 'symbol-narrow' : '1.2-2' : 'pt-BR' }}
+            </span>
+          </div>
+        </div>
+        <div hlmCardContent class="flex justify-end gap-1 pt-0">
+          <button
+            type="button"
+            hlmBtn
+            variant="ghost"
+            size="icon-sm"
+            aria-label="Editar conta"
+            (click)="openEditAccountDialog(account)"
+          >
+            <ng-icon name="lucidePencil" />
+          </button>
+          <button
+            type="button"
+            hlmBtn
+            variant="ghost"
+            size="icon-sm"
+            aria-label="Excluir conta"
+            [disabled]="actingAccountId() === account.id"
+            (click)="confirmDelete(account)"
+          >
+            @if (actingAccountId() === account.id) {
+            <hlm-spinner />
+            } @else {
+            <ng-icon name="lucideTrash2" class="text-destructive" />
+            }
+          </button>
+        </div>
+      </article>
+      }
+    </div>
+    }
+  </section>
+</div>
+
+<app-create-account-dialog (accountCreated)="onAccountCreated($event)" />
+<app-edit-account-dialog (accountUpdated)="onAccountUpdated($event)" />
+<app-create-transaction-dialog (transactionCreated)="onTransactionCreated()" />
+
+<hlm-dialog #deleteDialog>
+  <hlm-dialog-content *hlmDialogPortal>
+    <hlm-dialog-header>
+      <h3 hlmDialogTitle>Excluir conta</h3>
+      <p hlmDialogDescription>
+        Tem certeza que deseja excluir
+        <strong>{{ pendingDelete()?.name }}</strong>? Essa ação não pode ser desfeita.
+      </p>
+    </hlm-dialog-header>
+    <hlm-dialog-footer>
+      <button type="button" hlmBtn variant="outline" hlmDialogClose>Cancelar</button>
+      <button
+        type="button"
+        hlmBtn
+        variant="destructive"
+        [disabled]="actingAccountId() !== null"
+        (click)="deletePendingAccount()"
+      >
+        Excluir
+      </button>
+    </hlm-dialog-footer>
+  </hlm-dialog-content>
+</hlm-dialog>

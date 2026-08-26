@@ -1,0 +1,143 @@
+<div class="flex flex-col gap-8">
+  <div class="flex flex-col gap-1">
+    <h1 class="text-2xl tracking-tight">Nova transação</h1>
+    <p class="text-muted-foreground text-sm">
+      Registre um lançamento usando suas contas e categorias (sistema + personalizadas).
+    </p>
+  </div>
+
+  @if (loadingData()) {
+  <div class="text-muted-foreground flex items-center gap-2 text-sm">
+    <hlm-spinner />
+    Carregando contas e categorias...
+  </div>
+  } @else if (accounts().length === 0 || categories().length === 0) {
+  <div class="rounded-lg border border-amber-500/30 bg-amber-500/10 p-4 text-sm">
+    @if (accounts().length === 0) {
+    <p>• Nenhuma conta disponível — <a routerLink="/finance/account" class="text-primary font-medium">criar conta</a></p>
+    }
+    @if (categories().length === 0) {
+    <p>• Nenhuma categoria compatível — <a routerLink="/finance/category" class="text-primary font-medium">criar categoria</a></p>
+    }
+  </div>
+  }
+
+  <form class="grid max-w-xl gap-4" (submit)="$event.preventDefault(); onSubmit()">
+    <div class="flex flex-col gap-2">
+      <label class="text-sm font-medium" for="transaction-type">Tipo</label>
+      <select
+        id="transaction-type"
+        class="border-input bg-background ring-offset-background focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+        [formField]="transactionForm.type"
+        (change)="onTypeChange($any($event.target).value)"
+      >
+        @for (type of transactionTypes; track type) {
+        <option [value]="type">{{ transactionTypeLabels[type] }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label class="text-sm font-medium" for="transaction-account">Conta</label>
+      <select
+        id="transaction-account"
+        class="border-input bg-background ring-offset-background focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+        [formField]="transactionForm.accountId"
+      >
+        <option value="">Selecione uma conta</option>
+        @for (account of accounts(); track account.id) {
+        <option [value]="account.id">{{ account.name }} ({{ account.type }})</option>
+        }
+      </select>
+      @if (transactionForm.accountId().touched() && transactionForm.accountId().invalid()) {
+      <ul class="text-destructive text-end text-sm">
+        @for (error of transactionForm.accountId().errors(); track error) {
+        <li>{{ error.message }}</li>
+        }
+      </ul>
+      }
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label class="text-sm font-medium" for="transaction-category">Categoria</label>
+      <select
+        id="transaction-category"
+        class="border-input bg-background ring-offset-background focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+        [formField]="transactionForm.categoryId"
+      >
+        <option value="">Selecione uma categoria</option>
+        @for (category of categories(); track category.id) {
+        <option [value]="category.id">
+          {{ category.name }}{{ category.isSystem ? ' (sistema)' : '' }}
+        </option>
+        }
+      </select>
+      @if (transactionForm.categoryId().touched() && transactionForm.categoryId().invalid()) {
+      <ul class="text-destructive text-end text-sm">
+        @for (error of transactionForm.categoryId().errors(); track error) {
+        <li>{{ error.message }}</li>
+        }
+      </ul>
+      }
+    </div>
+
+    <div>
+      <hlm-input-group>
+        <input
+          hlmInputGroupInput
+          [formField]="transactionForm.description"
+          type="text"
+          placeholder="Descrição do lançamento"
+        />
+        <hlm-input-group-addon>
+          <ng-icon name="lucideReceipt" />
+        </hlm-input-group-addon>
+      </hlm-input-group>
+      @if (transactionForm.description().touched() && transactionForm.description().invalid()) {
+      <ul class="text-destructive mt-1 ml-2 text-end text-sm">
+        @for (error of transactionForm.description().errors(); track error) {
+        <li>{{ error.message }}</li>
+        }
+      </ul>
+      }
+    </div>
+
+    <div>
+      <hlm-input-group>
+        <input
+          hlmInputGroupInput
+          [formField]="transactionForm.amount"
+          type="number"
+          step="0.01"
+          placeholder="Valor"
+        />
+        <hlm-input-group-addon>R$</hlm-input-group-addon>
+      </hlm-input-group>
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label class="text-sm font-medium" for="transaction-date">Data</label>
+      <input
+        id="transaction-date"
+        class="border-input bg-background ring-offset-background focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+        type="date"
+        [formField]="transactionForm.transactionDate"
+      />
+    </div>
+
+    <div class="flex flex-wrap gap-3">
+      <button type="submit" hlmBtn [disabled]="loading() || !transactionForm().valid()" class="gap-2">
+        @if (loading()) {
+        <hlm-spinner data-icon="inline-start" />
+        }
+        Registrar transação
+      </button>
+      <a routerLink="/finance" hlmBtn variant="outline">Cancelar</a>
+    </div>
+  </form>
+
+  <a routerLink="/finance" class="text-primary inline-flex items-center gap-1 text-sm font-medium hover:opacity-80">
+    <ng-icon name="lucideArrowLeft" />
+    Voltar para finanças
+  </a>
+</div>

@@ -1,5 +1,5 @@
 import { CurrencyPipe, NgClass } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, viewChild } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
   lucideBookOpen,
@@ -8,11 +8,13 @@ import {
   lucideFlame,
   lucideListTodo,
   lucidePiggyBank,
+  lucidePlus,
   lucideSparkles,
   lucideTarget,
   lucideWallet,
 } from '@ng-icons/lucide';
 import { HlmBadge } from '@spartan-ng/helm/badge';
+import { HlmButtonImports } from '@spartan-ng/helm/button';
 import {
   HlmCard,
   HlmCardContent,
@@ -27,6 +29,7 @@ import {
   HomeHabitItem,
   HomeTaskItem,
 } from './home.mock';
+import { CreateTransactionDialog } from '../finance/components/create-transaction-dialog/create-transaction-dialog';
 
 @Component({
   selector: 'app-home',
@@ -41,6 +44,7 @@ import {
       lucideCheck,
       lucideCircleDashed,
       lucideSparkles,
+      lucidePlus,
     }),
   ],
   imports: [
@@ -48,16 +52,20 @@ import {
     NgClass,
     NgIcon,
     HlmBadge,
+    HlmButtonImports,
     HlmCard,
     HlmCardHeader,
     HlmCardTitle,
     HlmCardDescription,
     HlmCardContent,
+    CreateTransactionDialog,
   ],
   templateUrl: './home.html',
 })
 export class Home {
   protected readonly auth = inject(AuthService);
+
+  private readonly transactionDialog = viewChild(CreateTransactionDialog);
 
   private readonly dashboard = signal(HOME_DASHBOARD_MOCK);
 
@@ -119,5 +127,9 @@ export class Home {
     if (domain === 'estudo') return 'Estudo';
     if (domain === 'finanças') return 'Finanças';
     return 'Pessoal';
+  }
+
+  protected openQuickTransaction(): void {
+    this.transactionDialog()?.open();
   }
 }

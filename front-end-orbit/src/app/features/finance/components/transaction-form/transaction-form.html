@@ -1,0 +1,157 @@
+@if (loadingData() || (!dataLoaded() && accounts().length === 0)) {
+<div class="text-muted-foreground flex items-center justify-center gap-2 py-8 text-sm">
+  <hlm-spinner />
+  Carregando contas e categorias...
+</div>
+} @else if (accounts().length === 0) {
+<div class="rounded-lg border border-amber-500/30 bg-amber-500/10 p-4 text-sm">
+  Nenhuma conta cadastrada. Crie uma conta antes de registrar a transação.
+</div>
+} @else if (allCategories().length === 0) {
+<div class="rounded-lg border border-amber-500/30 bg-amber-500/10 p-4 text-sm">
+  Nenhuma categoria disponível. Verifique se a migration V4 foi aplicada no backend.
+</div>
+} @else {
+<form class="grid gap-4" (submit)="$event.preventDefault(); onSubmit()">
+  <div class="flex flex-col gap-2">
+    <label class="text-sm font-medium" for="transaction-type">Tipo</label>
+    <select
+      id="transaction-type"
+      class="border-input bg-background ring-offset-background focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+      [formField]="transactionForm.type"
+      (change)="onTypeChange($any($event.target).value)"
+    >
+      @for (type of transactionTypes; track type) {
+      <option [value]="type">{{ transactionTypeLabels[type] }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="flex flex-col gap-2">
+    <label class="text-sm font-medium" for="transaction-account">Conta</label>
+    <select
+      id="transaction-account"
+      class="border-input bg-background ring-offset-background focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+      [formField]="transactionForm.accountId"
+    >
+      <option value="">Selecione uma conta</option>
+      @for (account of accounts(); track account.id) {
+      <option [value]="account.id">{{ account.name }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="flex flex-col gap-2">
+    <label class="text-sm font-medium" for="transaction-category">Categoria</label>
+    <select
+      id="transaction-category"
+      class="border-input bg-background ring-offset-background focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+      [value]="categorySelectValue()"
+      (change)="onCategoryChange($event)"
+    >
+      <option value="">Selecione uma categoria</option>
+      <option [value]="NEW_CATEGORY_VALUE">+ Nova categoria</option>
+      @for (category of categories(); track category.id) {
+      <option [value]="category.id">{{ categoryLabel(category) }}</option>
+      }
+    </select>
+
+    @if (showNewCategoryForm()) {
+    <div class="bg-muted/40 flex flex-col gap-2 rounded-lg border p-3">
+      <p class="text-muted-foreground text-xs">
+        Nova categoria de {{ transactionTypeLabels[formModel().type].toLowerCase() }}
+      </p>
+      <hlm-input-group>
+        <input
+          hlmInputGroupInput
+          type="text"
+          placeholder="Nome da categoria"
+          maxlength="100"
+          [value]="newCategoryName()"
+          (input)="onNewCategoryNameInput($event)"
+          (keydown.enter)="$event.preventDefault(); createQuickCategory()"
+        />
+        <hlm-input-group-addon>
+          <ng-icon name="lucideFolderPlus" />
+        </hlm-input-group-addon>
+      </hlm-input-group>
+      <div class="flex justify-end gap-2">
+        <button type="button" hlmBtn variant="ghost" size="sm" (click)="cancelNewCategory()">
+          Cancelar
+        </button>
+        <button
+          type="button"
+          hlmBtn
+          size="sm"
+          class="gap-2"
+          [disabled]="creatingCategory() || newCategoryName().trim().length < 2"
+          (click)="createQuickCategory()"
+        >
+          @if (creatingCategory()) {
+          <hlm-spinner data-icon="inline-start" />
+          }
+          Criar
+        </button>
+      </div>
+    </div>
+    }
+  </div>
+
+  <div>
+    <label class="mb-2 block text-sm font-medium" for="transaction-description">Descrição</label>
+    <hlm-input-group>
+      <input
+        id="transaction-description"
+        hlmInputGroupInput
+        [formField]="transactionForm.description"
+        type="text"
+        placeholder="Ex.: Supermercado, salário"
+      />
+      <hlm-input-group-addon>
+        <ng-icon name="lucideReceipt" />
+      </hlm-input-group-addon>
+    </hlm-input-group>
+  </div>
+
+  <div class="grid gap-4 sm:grid-cols-2 sm:items-end">
+    <div class="flex flex-col gap-2">
+      <label class="text-sm font-medium" for="transaction-amount">Valor</label>
+      <hlm-input-group>
+        <hlm-input-group-addon>R$</hlm-input-group-addon>
+        <input
+          id="transaction-amount"
+          hlmInputGroupInput
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="0,00"
+          [value]="amountDisplay()"
+          (input)="onAmountInput($event)"
+        />
+      </hlm-input-group>
+    </div>
+    <div class="flex flex-col gap-2">
+      <label class="text-sm font-medium" for="transaction-date">Data</label>
+      <hlm-input-group>
+        <input
+          id="transaction-date"
+          hlmInputGroupInput
+          class="appearance-none [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+          type="date"
+          [formField]="transactionForm.transactionDate"
+        />
+      </hlm-input-group>
+    </div>
+  </div>
+
+  <div class="flex flex-wrap justify-end gap-2 pt-2">
+    <button type="button" hlmBtn variant="outline" (click)="cancelled.emit()">Cancelar</button>
+    <button type="submit" hlmBtn [disabled]="loading() || !canSubmit()" class="gap-2">
+      @if (loading()) {
+      <hlm-spinner data-icon="inline-start" />
+      }
+      Registrar
+    </button>
+  </div>
+</form>
+}
