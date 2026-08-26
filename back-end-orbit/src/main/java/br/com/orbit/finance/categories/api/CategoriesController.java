@@ -17,7 +17,6 @@ import br.com.orbit.finance.categories.application.usecase.GetCategoriesAvailabl
 import br.com.orbit.shared.api.AuthenticatedUserSupport;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
@@ -33,10 +32,10 @@ public class CategoriesController {
     }
 
     @GetMapping("/avaliable-to-user")
-    public ResponseEntity<List<CategoriesPresenter>> getCategoriesByUserAndSystem(@Valid @RequestParam Authentication authentication) {
+    public ResponseEntity<List<CategoriesPresenter>> getCategoriesByUserAndSystem(Authentication authentication) {
         List<CategoriesPresenter> categories = getCategoriesAvailableToUserUseCase.execute(
-            AuthenticatedUserSupport.userIdFrom(authentication));
-            return ResponseEntity.ok(categories);
+                AuthenticatedUserSupport.userIdFrom(authentication));
+        return ResponseEntity.ok(categories);
     }
     
 
