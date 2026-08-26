@@ -1,12 +1,15 @@
 package br.com.orbit.finance.transactions.infrastructure.persistence;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 
 import br.com.orbit.finance.transactions.domain.Transactions;
+import br.com.orbit.finance.transactions.domain.TransactionsFilter;
+import br.com.orbit.finance.transactions.domain.TransactionsPage;
 import br.com.orbit.finance.transactions.domain.TransactionsRepository;
 
 @Repository
@@ -29,12 +32,22 @@ public class TransactionRepositoryAdapter implements TransactionsRepository {
     }
 
     @Override
-    public List<Transactions> findAllByUserId(UUID userId) {
-        return springDataTransactionsRepository.findAllByUserId(userId);
-    }
+    public TransactionsPage findByFilters(UUID userId, TransactionsFilter filter) {
+        Page<Transactions> page = springDataTransactionsRepository.findByFilters(
+                userId,
+                filter.accountId(),
+                filter.type(),
+                filter.from(),
+                filter.to(),
+                PageRequest.of(filter.page(), filter.size())
+        );
 
-    @Override
-    public List<Transactions> findAllByAccountId(UUID accountId) {
-        return springDataTransactionsRepository.findAllByAccountId(accountId);
+        return new TransactionsPage(
+                page.getContent(),
+                page.getTotalElements(),
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalPages()
+        );
     }
 }

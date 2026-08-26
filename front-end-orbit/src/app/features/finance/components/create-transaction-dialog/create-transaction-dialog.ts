@@ -1,4 +1,4 @@
-import { Component, output, viewChild } from '@angular/core';
+import { Component, output, signal, viewChild } from '@angular/core';
 import { HlmDialog, HlmDialogImports } from '@spartan-ng/helm/dialog';
 import { TransactionForm } from '../transaction-form/transaction-form';
 
@@ -11,7 +11,11 @@ import { TransactionForm } from '../transaction-form/transaction-form';
         <hlm-dialog-header>
           <h3 hlmDialogTitle>Nova transação</h3>
           <p hlmDialogDescription>
+            @if (accountName()) {
+            Registre um lançamento em <strong>{{ accountName() }}</strong>.
+            } @else {
             Registre uma receita ou despesa rapidamente.
+            }
           </p>
         </hlm-dialog-header>
         <app-transaction-form
@@ -26,19 +30,22 @@ import { TransactionForm } from '../transaction-form/transaction-form';
 export class CreateTransactionDialog {
   readonly transactionCreated = output<void>();
 
+  protected readonly accountName = signal<string | null>(null);
+
   private readonly dialog = viewChild<HlmDialog>('dialog');
   private readonly form = viewChild<TransactionForm>('form');
 
-  open(): void {
+  open(options?: { accountId?: string; accountName?: string }): void {
+    this.accountName.set(options?.accountName ?? null);
     this.dialog()?.open();
-    // Form fica no portal do dialog — só existe após abrir
     queueMicrotask(() => {
-      this.form()?.resetForm();
+      this.form()?.resetForm(options?.accountId);
       this.form()?.loadData();
     });
   }
 
   close(): void {
+    this.accountName.set(null);
     this.dialog()?.close();
   }
 
