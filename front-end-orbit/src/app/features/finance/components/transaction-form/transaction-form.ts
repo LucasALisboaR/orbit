@@ -121,13 +121,13 @@ export class TransactionForm {
       });
   }
 
-  resetForm(): void {
+  resetForm(accountId?: string): void {
     this.dataLoaded.set(false);
     this.amountDisplay.set('');
     this.showNewCategoryForm.set(false);
     this.newCategoryName.set('');
     this.formModel.set({
-      accountId: '',
+      accountId: accountId ?? '',
       categoryId: '',
       description: '',
       amount: 0,

@@ -1,0 +1,111 @@
+<section hlmCard class="ring-0">
+  <div hlmCardHeader>
+    <h2 hlmCardTitle class="text-lg">Extrato</h2>
+    <p hlmCardDescription>
+      Todos os lançamentos com filtros por conta, tipo e período.
+    </p>
+  </div>
+
+  <div hlmCardContent class="flex flex-col gap-4">
+    <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div class="flex flex-col gap-1.5">
+        <label class="text-sm font-medium" for="filter-account">Conta</label>
+        <select
+          id="filter-account"
+          class="border-input bg-background ring-offset-background focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+          [value]="filterAccountId()"
+          (change)="onFilterAccountChange($event)"
+        >
+          <option value="">Todas as contas</option>
+          @for (account of accounts(); track account.id) {
+          <option [value]="account.id">{{ account.name }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <label class="text-sm font-medium" for="filter-type">Tipo</label>
+        <select
+          id="filter-type"
+          class="border-input bg-background ring-offset-background focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+          [value]="filterType()"
+          (change)="onFilterTypeChange($event)"
+        >
+          <option value="">Todos os tipos</option>
+          @for (type of transactionTypes; track type) {
+          <option [value]="type">{{ transactionTypeLabels[type] }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <label class="text-sm font-medium" for="filter-from">De</label>
+        <input
+          id="filter-from"
+          type="date"
+          class="border-input bg-background ring-offset-background focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+          [value]="filterFrom()"
+          (change)="onFilterFromChange($event)"
+        />
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <label class="text-sm font-medium" for="filter-to">Até</label>
+        <input
+          id="filter-to"
+          type="date"
+          class="border-input bg-background ring-offset-background focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+          [value]="filterTo()"
+          (change)="onFilterToChange($event)"
+        />
+      </div>
+    </div>
+
+    <div class="flex flex-wrap gap-2">
+      <button type="button" hlmBtn size="sm" [disabled]="loading()" (click)="applyFilters()">
+        Aplicar filtros
+      </button>
+      <button type="button" hlmBtn variant="outline" size="sm" [disabled]="loading()" (click)="clearFilters()">
+        Limpar
+      </button>
+    </div>
+
+    @if (loading()) {
+    <div class="text-muted-foreground flex items-center gap-2 py-6 text-sm">
+      <hlm-spinner />
+      Carregando transações...
+    </div>
+    } @else {
+    <p class="text-muted-foreground text-xs">{{ totalElements() }} lançamento(s) encontrado(s)</p>
+    <app-transaction-list [transactions]="transactions()" [categoryNames]="categoryNames()" />
+
+    @if (totalPages() > 1) {
+    <div class="flex items-center justify-between gap-2 border-t pt-4">
+      <button
+        type="button"
+        hlmBtn
+        variant="outline"
+        size="sm"
+        [disabled]="page() === 0"
+        (click)="previousPage()"
+      >
+        Anterior
+      </button>
+      <span class="text-muted-foreground text-xs tabular-nums">
+        Página {{ page() + 1 }} de {{ totalPages() }}
+      </span>
+      <button
+        type="button"
+        hlmBtn
+        variant="outline"
+        size="sm"
+        [disabled]="page() >= totalPages() - 1"
+        (click)="nextPage()"
+      >
+        Próxima
+      </button>
+    </div>
+    }
+    }
+  </div>
+</section>

@@ -1,0 +1,38 @@
+@if (transactions().length === 0) {
+<p class="text-muted-foreground py-3 text-center text-sm">Nenhuma transação encontrada.</p>
+} @else {
+<ul class="divide-border divide-y">
+  @for (transaction of transactions(); track transaction.id) {
+  <li class="flex items-center justify-between gap-3 py-2.5">
+    <div class="min-w-0 flex-1">
+      <p class="truncate text-sm font-medium">{{ transaction.description }}</p>
+      <p class="text-muted-foreground truncate text-xs">
+        {{ categoryName(transaction.categoryId) }}
+        @if (!compact()) {
+        · {{ transaction.transactionDate | date: 'dd/MM/yyyy' : 'UTC' }}
+        }
+      </p>
+    </div>
+    <div class="flex shrink-0 flex-col items-end gap-1">
+      <span
+        class="text-sm font-medium tabular-nums"
+        [class.text-emerald-600]="transaction.type === TransactionType.INCOME"
+        [class.text-red-600]="transaction.type === TransactionType.EXPENSE"
+      >
+        {{ transaction.type === TransactionType.INCOME ? '+' : '−' }}
+        {{ transaction.amount | currency: 'BRL' : 'symbol-narrow' : '1.2-2' : 'pt-BR' }}
+      </span>
+      @if (compact()) {
+      <span class="text-muted-foreground text-xs tabular-nums">
+        {{ transaction.transactionDate | date: 'dd/MM/yyyy' : 'UTC' }}
+      </span>
+      } @else {
+      <span hlmBadge variant="outline" class="text-[10px]">
+        {{ transactionTypeLabels[transaction.type] }}
+      </span>
+      }
+    </div>
+  </li>
+  }
+</ul>
+}

@@ -32,6 +32,23 @@ export interface Transaction {
   updatedAt: string;
 }
 
+export interface ListTransactionsFilter {
+  accountId?: string;
+  type?: TransactionType;
+  from?: string;
+  to?: string;
+  page?: number;
+  size?: number;
+}
+
+export interface TransactionsPage {
+  content: Transaction[];
+  totalElements: number;
+  page: number;
+  size: number;
+  totalPages: number;
+}
+
 export interface CreateTransactionFormData {
   accountId: string;
   categoryId: string;

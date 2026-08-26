@@ -35,6 +35,33 @@
     </div>
   </article>
 
+  <!-- Navegação entre views -->
+  <nav class="bg-muted/50 flex w-full gap-1 rounded-lg p-1 sm:w-fit">
+    <button
+      type="button"
+      hlmBtn
+      size="sm"
+      class="flex-1 gap-1.5 sm:flex-none"
+      [variant]="activeView() === 'accounts' ? 'default' : 'ghost'"
+      (click)="setView('accounts')"
+    >
+      <ng-icon name="lucideWallet" />
+      Contas
+    </button>
+    <button
+      type="button"
+      hlmBtn
+      size="sm"
+      class="flex-1 gap-1.5 sm:flex-none"
+      [variant]="activeView() === 'statement' ? 'default' : 'ghost'"
+      (click)="setView('statement')"
+    >
+      <ng-icon name="lucideTable" />
+      Extrato
+    </button>
+  </nav>
+
+  @if (activeView() === 'accounts') {
   <!-- Lista de contas -->
   <section class="flex flex-col gap-3">
     <h2 class="text-lg font-medium">Suas contas</h2>
@@ -73,43 +100,95 @@
             </span>
           </div>
         </div>
-        <div hlmCardContent class="flex justify-end gap-1 pt-0">
-          <button
-            type="button"
-            hlmBtn
-            variant="ghost"
-            size="icon-sm"
-            aria-label="Editar conta"
-            (click)="openEditAccountDialog(account)"
-          >
-            <ng-icon name="lucidePencil" />
-          </button>
-          <button
-            type="button"
-            hlmBtn
-            variant="ghost"
-            size="icon-sm"
-            aria-label="Excluir conta"
-            [disabled]="actingAccountId() === account.id"
-            (click)="confirmDelete(account)"
-          >
-            @if (actingAccountId() === account.id) {
-            <hlm-spinner />
+
+        <div hlmCardContent class="flex flex-col gap-3 pt-0">
+          <div>
+            <p class="text-muted-foreground mb-1 text-xs font-medium uppercase tracking-wide">
+              Últimas transações
+            </p>
+            @if (loadingRecent()) {
+            <div class="text-muted-foreground flex items-center gap-2 py-2 text-xs">
+              <hlm-spinner />
+              Carregando...
+            </div>
+            } @else if (recentTransactions(account.id).length === 0) {
+            <p class="text-muted-foreground py-2 text-xs">Nenhuma transação ainda.</p>
             } @else {
-            <ng-icon name="lucideTrash2" class="text-destructive" />
+            <app-transaction-list
+              [transactions]="recentTransactions(account.id)"
+              [categoryNames]="categoryNames()"
+              [compact]="true"
+            />
             }
-          </button>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-between gap-2 border-t pt-2">
+            <div class="flex flex-wrap gap-2">
+              <button
+                type="button"
+                hlmBtn
+                size="sm"
+                class="gap-1.5"
+                (click)="openTransactionDialog(account)"
+              >
+                <ng-icon name="lucideReceipt" />
+                Lançar
+              </button>
+              <button
+                type="button"
+                hlmBtn
+                variant="outline"
+                size="sm"
+                class="gap-1.5"
+                (click)="openAccountTransactions(account)"
+              >
+                <ng-icon name="lucideList" />
+                Ver transações
+              </button>
+            </div>
+            <div class="flex gap-1">
+              <button
+                type="button"
+                hlmBtn
+                variant="ghost"
+                size="icon-sm"
+                aria-label="Editar conta"
+                (click)="openEditAccountDialog(account)"
+              >
+                <ng-icon name="lucidePencil" />
+              </button>
+              <button
+                type="button"
+                hlmBtn
+                variant="ghost"
+                size="icon-sm"
+                aria-label="Excluir conta"
+                [disabled]="actingAccountId() === account.id"
+                (click)="confirmDelete(account)"
+              >
+                @if (actingAccountId() === account.id) {
+                <hlm-spinner />
+                } @else {
+                <ng-icon name="lucideTrash2" class="text-destructive" />
+                }
+              </button>
+            </div>
+          </div>
         </div>
       </article>
       }
     </div>
     }
   </section>
+  } @else if (!loadingAccounts()) {
+  <app-all-transactions-section [accounts]="accounts()" [categories]="categories()" />
+  }
 </div>
 
 <app-create-account-dialog (accountCreated)="onAccountCreated($event)" />
 <app-edit-account-dialog (accountUpdated)="onAccountUpdated($event)" />
 <app-create-transaction-dialog (transactionCreated)="onTransactionCreated()" />
+<app-account-transactions-dialog />
 
 <hlm-dialog #deleteDialog>
   <hlm-dialog-content *hlmDialogPortal>

@@ -1,0 +1,51 @@
+<hlm-dialog #dialog>
+  <hlm-dialog-content *hlmDialogPortal class="flex max-h-[85vh] flex-col sm:max-w-lg">
+    <hlm-dialog-header>
+      <h3 hlmDialogTitle>Transações — {{ account()?.name }}</h3>
+      <p hlmDialogDescription>
+        {{ totalElements() }} lançamento(s) nesta conta.
+      </p>
+    </hlm-dialog-header>
+
+    <div class="min-h-0 flex-1 overflow-y-auto">
+      @if (loading()) {
+      <div class="text-muted-foreground flex items-center justify-center gap-2 py-10 text-sm">
+        <hlm-spinner />
+        Carregando...
+      </div>
+      } @else {
+      <app-transaction-list [transactions]="transactions()" [categoryNames]="categoryNames()" />
+      }
+    </div>
+
+    @if (totalPages() > 1) {
+    <hlm-dialog-footer class="border-t pt-4">
+      <div class="flex w-full items-center justify-between gap-2">
+        <button
+          type="button"
+          hlmBtn
+          variant="outline"
+          size="sm"
+          [disabled]="loading() || page() === 0"
+          (click)="previousPage()"
+        >
+          Anterior
+        </button>
+        <span class="text-muted-foreground text-xs tabular-nums">
+          Página {{ page() + 1 }} de {{ totalPages() }}
+        </span>
+        <button
+          type="button"
+          hlmBtn
+          variant="outline"
+          size="sm"
+          [disabled]="loading() || page() >= totalPages() - 1"
+          (click)="nextPage()"
+        >
+          Próxima
+        </button>
+      </div>
+    </hlm-dialog-footer>
+    }
+  </hlm-dialog-content>
+</hlm-dialog>
