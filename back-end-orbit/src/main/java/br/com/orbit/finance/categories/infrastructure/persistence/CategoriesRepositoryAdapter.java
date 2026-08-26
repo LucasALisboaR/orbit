@@ -29,8 +29,13 @@ public class CategoriesRepositoryAdapter implements CategoriesRepository {
     }
 
     @Override
-    public List<Categories> findAllByUserId(UUID userId) {
-        return springDataCategoriesRepository.findAllByUserId(userId);
+    public List<Categories> findAllActiveAndIsSytemTrueAndUserId(UUID userId) {
+        return springDataCategoriesRepository.findAllVisibleToUser(userId);
+    }
+
+    @Override
+    public List<Categories> findAll() {
+        return springDataCategoriesRepository.findAll();
     }
 
     @Override

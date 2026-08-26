@@ -10,7 +10,9 @@ public interface CategoriesRepository {
 
     Optional<Categories> findById(UUID id);
 
-    List<Categories> findAllByUserId(UUID userId);
+    List<Categories> findAll();
+
+    List<Categories> findAllActiveAndIsSytemTrueAndUserId(UUID userId);
 
     boolean existsByNameAndUserId(String name, UUID userId);
 }
